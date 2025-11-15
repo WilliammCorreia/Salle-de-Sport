@@ -1,0 +1,63 @@
+<div>
+  <h1>Mon Profil</h1>
+
+  <div *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="successMessage">
+    <p>{{ successMessage }}</p>
+  </div>
+
+  <div *ngIf="user">
+    <h2>Informations du compte</h2>
+    <p>Rôle: {{ user.role }}</p>
+    <p>Actif: {{ user.isActive ? 'Oui' : 'Non' }}</p>
+    <p>Membre depuis: {{ user.createdAt | date:'dd/MM/yyyy' }}</p>
+  </div>
+
+  <h2>Modifier le profil</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+    <div>
+      <label for="firstName">Prénom:</label>
+      <input id="firstName" type="text" formControlName="firstName" />
+    </div>
+
+    <div>
+      <label for="lastName">Nom:</label>
+      <input id="lastName" type="text" formControlName="lastName" />
+    </div>
+
+    <div>
+      <label for="email">Email:</label>
+      <input id="email" type="email" formControlName="email" />
+    </div>
+
+    <div>
+      <label for="phone">Téléphone:</label>
+      <input id="phone" type="tel" formControlName="phone" />
+    </div>
+
+    <button type="submit" [disabled]="!profileForm.valid">
+      Mettre à jour le profil
+    </button>
+  </form>
+
+  <h2>Changer le mot de passe</h2>
+  <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+    <div>
+      <label for="currentPassword">Mot de passe actuel:</label>
+      <input id="currentPassword" type="password" formControlName="currentPassword" />
+    </div>
+
+    <div>
+      <label for="newPassword">Nouveau mot de passe:</label>
+      <input id="newPassword" type="password" formControlName="newPassword" />
+      <small>Minimum 6 caractères</small>
+    </div>
+
+    <button type="submit" [disabled]="!passwordForm.valid">
+      Changer le mot de passe
+    </button>
+  </form>
+</div>

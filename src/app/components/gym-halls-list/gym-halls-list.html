@@ -1,0 +1,47 @@
+<div>
+  <h2>Salles de Sport</h2>
+
+  @if (authService.isGymOwner()) {
+    <button (click)="createNew()">Créer une nouvelle salle</button>
+  }
+
+  <div>
+    <input 
+      type="text" 
+      [(ngModel)]="searchTerm" 
+      placeholder="Rechercher..."
+      (input)="loadGymHalls()"
+    >
+    <input 
+      type="text" 
+      [(ngModel)]="cityFilter" 
+      placeholder="Filtrer par ville"
+      (input)="loadGymHalls()"
+    >
+  </div>
+
+  @if (loading) {
+    <p>Chargement...</p>
+  } @else {
+    @if (gymHalls.length === 0) {
+      <p>Aucune salle trouvée</p>
+    } @else {
+      @for (hall of gymHalls; track hall._id) {
+        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+          <h3>{{ hall.name }}</h3>
+          <p>{{ hall.description }}</p>
+          <p><strong>Ville:</strong> {{ hall.address.city }}</p>
+          <p><strong>Capacité:</strong> {{ hall.capacity }} personnes</p>
+          <p><strong>Statut:</strong> {{ hall.status }}</p>
+          
+          <button (click)="viewDetail(hall._id)">Voir détails</button>
+          
+          @if (authService.isAdmin() && hall.status === 'pending') {
+            <button (click)="approveHall(hall._id)">Approuver</button>
+            <button (click)="rejectHall(hall._id)">Rejeter</button>
+          }
+        </div>
+      }
+    }
+  }
+</div>

@@ -1,0 +1,29 @@
+<nav>
+  <a routerLink="/" style="font-weight: bold;">Salle de Sport</a>
+  
+  @if (authService.isLoggedIn()) {
+    <span> | </span>
+    <a routerLink="/gym-halls">Salles</a>
+    
+    @if (authService.isAdmin()) {
+      <span> | </span>
+      <a routerLink="/users">Utilisateurs</a>
+    }
+    
+    <span> | </span>
+    <a routerLink="/profile">Mon Profil</a>
+    
+    <span> | </span>
+    <button (click)="logout()">Déconnexion</button>
+    
+    <span style="margin-left: 20px;">
+      Connecté: {{ authService.getCurrentUser()?.firstName }} ({{ authService.getCurrentUser()?.role }})
+    </span>
+  } @else {
+    <span> | </span>
+    <a routerLink="/login">Connexion</a>
+    <span> | </span>
+    <a routerLink="/register">Inscription</a>
+  }
+</nav>
+<hr>

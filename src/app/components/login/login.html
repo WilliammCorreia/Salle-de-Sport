@@ -1,0 +1,39 @@
+<div>
+  <h2>Connexion</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label>Email:</label><br />
+      <input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+        placeholder="email@example.com"
+      />
+    </div>
+
+    <div>
+      <label>Mot de passe:</label><br />
+      <input
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        required
+        placeholder="••••••••"
+      />
+    </div>
+
+    @if (errorMessage) {
+    <div style="color: red">{{ errorMessage }}</div>
+    }
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Connexion...' : 'Se connecter' }}
+    </button>
+  </form>
+
+  <p>
+    <a routerLink="/register">Pas encore de compte ? S'inscrire</a>
+  </p>
+</div>

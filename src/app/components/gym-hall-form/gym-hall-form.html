@@ -1,0 +1,139 @@
+<div>
+  <h1>{{ isEditMode ? 'Modifier' : 'Créer' }} une salle de sport</h1>
+
+  <div *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <form [formGroup]="gymHallForm" (ngSubmit)="onSubmit()">
+    <h2>Informations générales</h2>
+    
+    <div>
+      <label for="name">Nom:</label>
+      <input id="name" type="text" formControlName="name" required />
+    </div>
+
+    <div>
+      <label for="description">Description:</label>
+      <textarea id="description" formControlName="description" rows="4" required></textarea>
+    </div>
+
+    <div>
+      <label for="capacity">Capacité:</label>
+      <input id="capacity" type="number" formControlName="capacity" />
+    </div>
+
+    <h2>Adresse</h2>
+    <div formGroupName="address">
+      <div>
+        <label for="street">Rue:</label>
+        <input id="street" type="text" formControlName="street" required />
+      </div>
+
+      <div>
+        <label for="city">Ville:</label>
+        <input id="city" type="text" formControlName="city" required />
+      </div>
+
+      <div>
+        <label for="postalCode">Code postal:</label>
+        <input id="postalCode" type="text" formControlName="postalCode" required />
+      </div>
+
+      <div>
+        <label for="country">Pays:</label>
+        <input id="country" type="text" formControlName="country" required />
+      </div>
+    </div>
+
+    <h2>Contact</h2>
+    <div formGroupName="contact">
+      <div>
+        <label for="phone">Téléphone:</label>
+        <input id="phone" type="tel" formControlName="phone" required />
+      </div>
+
+      <div>
+        <label for="email">Email:</label>
+        <input id="email" type="email" formControlName="email" required />
+      </div>
+
+      <div>
+        <label for="website">Site web:</label>
+        <input id="website" type="url" formControlName="website" />
+      </div>
+    </div>
+
+    <h2>Types d'activités</h2>
+    <div>
+      <div *ngFor="let type of activityTypes">
+        <label>
+          <input 
+            type="checkbox" 
+            [checked]="isActivityTypeSelected(type)"
+            (change)="onActivityTypeChange($event, type)"
+          />
+          {{ type }}
+        </label>
+      </div>
+    </div>
+
+    <h2>Équipements</h2>
+    <div formArrayName="equipment">
+      <div *ngFor="let eq of equipment.controls; let i = index" [formGroupName]="i">
+        <input type="text" formControlName="name" placeholder="Nom de l'équipement" />
+        <input type="number" formControlName="quantity" placeholder="Quantité" />
+        <button type="button" (click)="removeEquipment(i)">Supprimer</button>
+      </div>
+    </div>
+    <button type="button" (click)="addEquipment()">Ajouter un équipement</button>
+
+    <h2>Services</h2>
+    <div formArrayName="facilities">
+      <div *ngFor="let facility of facilities.controls; let i = index">
+        <input type="text" [formControlName]="i" placeholder="Service" />
+        <button type="button" (click)="removeFacility(i)">Supprimer</button>
+      </div>
+    </div>
+    <button type="button" (click)="addFacility()">Ajouter un service</button>
+
+    <h2>Tarifs</h2>
+    <div formGroupName="pricing">
+      <div>
+        <label for="monthly">Mensuel (€):</label>
+        <input id="monthly" type="number" formControlName="monthly" />
+      </div>
+
+      <div>
+        <label for="quarterly">Trimestriel (€):</label>
+        <input id="quarterly" type="number" formControlName="quarterly" />
+      </div>
+
+      <div>
+        <label for="yearly">Annuel (€):</label>
+        <input id="yearly" type="number" formControlName="yearly" />
+      </div>
+
+      <div>
+        <label for="dayPass">Pass journée (€):</label>
+        <input id="dayPass" type="number" formControlName="dayPass" />
+      </div>
+    </div>
+
+    <h2>Images (URLs)</h2>
+    <div formArrayName="images">
+      <div *ngFor="let img of images.controls; let i = index">
+        <input type="url" [formControlName]="i" placeholder="URL de l'image" />
+        <button type="button" (click)="removeImage(i)">Supprimer</button>
+      </div>
+    </div>
+    <button type="button" (click)="addImage()">Ajouter une image</button>
+
+    <div>
+      <button type="submit" [disabled]="!gymHallForm.valid">
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <a routerLink="/gym-halls">Annuler</a>
+    </div>
+  </form>
+</div>
