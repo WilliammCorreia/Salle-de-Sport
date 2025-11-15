@@ -1,0 +1,51 @@
+<div>
+  <h2>Inscription</h2>
+  
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label>Prénom:</label><br>
+      <input type="text" [(ngModel)]="formData.firstName" name="firstName" required>
+    </div>
+    
+    <div>
+      <label>Nom:</label><br>
+      <input type="text" [(ngModel)]="formData.lastName" name="lastName" required>
+    </div>
+    
+    <div>
+      <label>Email:</label><br>
+      <input type="email" [(ngModel)]="formData.email" name="email" required>
+    </div>
+    
+    <div>
+      <label>Mot de passe:</label><br>
+      <input type="password" [(ngModel)]="formData.password" name="password" required>
+    </div>
+    
+    <div>
+      <label>Téléphone:</label><br>
+      <input type="tel" [(ngModel)]="formData.phone" name="phone">
+    </div>
+    
+    <div>
+      <label>Rôle:</label><br>
+      <select [(ngModel)]="formData.role" name="role">
+        <option value="client">Client</option>
+        <option value="gym_owner">Propriétaire de salle</option>
+        <option value="super_admin">Super Admin</option>
+      </select>
+    </div>
+    
+    @if (errorMessage) {
+      <div style="color: red;">{{ errorMessage }}</div>
+    }
+    
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Inscription...' : 'S\'inscrire' }}
+    </button>
+  </form>
+  
+  <p>
+    <a routerLink="/login">Déjà un compte ? Se connecter</a>
+  </p>
+</div>

@@ -1,0 +1,75 @@
+<div>
+  @if (loading) {
+    <p>Chargement...</p>
+  } @else if (gymHall) {
+    <h2>{{ gymHall.name }}</h2>
+    
+    <div>
+      <h3>Informations générales</h3>
+      <p><strong>Description:</strong> {{ gymHall.description }}</p>
+      <p><strong>Capacité:</strong> {{ gymHall.capacity }} personnes</p>
+      <p><strong>Statut:</strong> {{ gymHall.status }}</p>
+    </div>
+
+    <div>
+      <h3>Adresse</h3>
+      <p>{{ gymHall.address.street }}</p>
+      <p>{{ gymHall.address.postalCode }} {{ gymHall.address.city }}</p>
+      <p>{{ gymHall.address.country }}</p>
+    </div>
+
+    <div>
+      <h3>Contact</h3>
+      <p><strong>Téléphone:</strong> {{ gymHall.contact.phone }}</p>
+      <p><strong>Email:</strong> {{ gymHall.contact.email }}</p>
+      @if (gymHall.contact.website) {
+        <p><strong>Site web:</strong> <a [href]="gymHall.contact.website" target="_blank">{{ gymHall.contact.website }}</a></p>
+      }
+    </div>
+
+    @if (gymHall.equipment && gymHall.equipment.length > 0) {
+      <div>
+        <h3>Équipements</h3>
+        <ul>
+          @for (equip of gymHall.equipment; track equip.name) {
+            <li>{{ equip.name }} (x{{ equip.quantity }})</li>
+          }
+        </ul>
+      </div>
+    }
+
+    @if (gymHall.activityTypes && gymHall.activityTypes.length > 0) {
+      <div>
+        <h3>Types d'activités</h3>
+        <p>{{ gymHall.activityTypes.join(', ') }}</p>
+      </div>
+    }
+
+    @if (gymHall.pricing) {
+      <div>
+        <h3>Tarifs</h3>
+        @if (gymHall.pricing.dailyPass) {
+          <p>Pass journalier: {{ gymHall.pricing.dailyPass }} {{ gymHall.pricing.currency }}</p>
+        }
+        @if (gymHall.pricing.monthlySubscription) {
+          <p>Abonnement mensuel: {{ gymHall.pricing.monthlySubscription }} {{ gymHall.pricing.currency }}</p>
+        }
+        @if (gymHall.pricing.yearlySubscription) {
+          <p>Abonnement annuel: {{ gymHall.pricing.yearlySubscription }} {{ gymHall.pricing.currency }}</p>
+        }
+      </div>
+    }
+
+    <div>
+      <button (click)="goBack()">Retour</button>
+      
+      @if (authService.isGymOwner()) {
+        <button (click)="edit()">Modifier</button>
+        <button (click)="delete()">Supprimer</button>
+      }
+    </div>
+  } @else {
+    <p>Salle non trouvée</p>
+    <button (click)="goBack()">Retour</button>
+  }
+</div>

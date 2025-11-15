@@ -1,0 +1,78 @@
+<div>
+  <h1>Gestion des utilisateurs</h1>
+
+  <div *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="successMessage">
+    <p>{{ successMessage }}</p>
+  </div>
+
+  <div>
+    <h2>Filtres</h2>
+
+    <div>
+      <label for="search">Rechercher:</label>
+      <input
+        id="search"
+        type="text"
+        [formControl]="searchTerm"
+        placeholder="Email, prénom, nom..."
+      />
+    </div>
+
+    <div>
+      <label for="roleFilter">Rôle:</label>
+      <select id="roleFilter" [formControl]="roleFilter">
+        <option value="">Tous</option>
+        <option value="client">Client</option>
+        <option value="gym_owner">Propriétaire</option>
+        <option value="super_admin">Admin</option>
+      </select>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Rôle</th>
+        <th>Statut</th>
+        <th>Créé le</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredUsers">
+        <td>{{ user.email }}</td>
+        <td>{{ user.lastName || '-' }}</td>
+        <td>{{ user.firstName || '-' }}</td>
+        <td>
+          <select
+            [value]="user.role"
+            (change)="changeUserRole(user._id, $any($event.target).value)"
+          >
+            <option value="client">Client</option>
+            <option value="gym_owner">Propriétaire</option>
+            <option value="super_admin">Admin</option>
+          </select>
+        </td>
+        <td>{{ user.isActive ? 'Actif' : 'Inactif' }}</td>
+        <td>{{ user.createdAt | date : 'dd/MM/yyyy' }}</td>
+        <td>
+          <button (click)="toggleUserStatus(user._id, user.isActive)">
+            {{ user.isActive ? 'Désactiver' : 'Activer' }}
+          </button>
+          <button (click)="deleteUser(user._id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="filteredUsers.length === 0">
+    <p>Aucun utilisateur trouvé.</p>
+  </div>
+</div>
