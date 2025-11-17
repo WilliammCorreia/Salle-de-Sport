@@ -12,6 +12,9 @@ RUN npm install
 # Copier le code source
 COPY . .
 
+# Copier le fichier .env.docker comme .env
+COPY .env.docker .env
+
 # Exposer le port
 EXPOSE 5000
 
