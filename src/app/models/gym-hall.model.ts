@@ -2,7 +2,7 @@ export interface GymHall {
   _id: string;
   name: string;
   description: string;
-  owner: string | any;
+  owner: string;
   address: {
     street: string;
     city: string;
