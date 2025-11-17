@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GymHallService } from '../../services/gym-hall.service';
-import { GymHall } from '../../models/gym-hall.model';
 
 @Component({
   selector: 'app-gym-hall-form',
@@ -16,7 +15,7 @@ export class GymHallForm implements OnInit {
   isEditMode = false;
   gymHallId: string | null = null;
   errorMessage = '';
-  
+
   activityTypes = [
     'musculation',
     'crossfit',
@@ -28,7 +27,7 @@ export class GymHallForm implements OnInit {
     'danse',
     'natation',
     'escalade',
-    'autre'
+    'autre',
   ];
 
   constructor(
@@ -44,12 +43,12 @@ export class GymHallForm implements OnInit {
         street: ['', Validators.required],
         city: ['', Validators.required],
         postalCode: ['', Validators.required],
-        country: ['France', Validators.required]
+        country: ['France', Validators.required],
       }),
       contact: this.fb.group({
         phone: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
-        website: ['']
+        website: [''],
       }),
       equipment: this.fb.array([]),
       facilities: this.fb.array([]),
@@ -61,16 +60,16 @@ export class GymHallForm implements OnInit {
         thursday: this.fb.group({ open: [''], close: [''] }),
         friday: this.fb.group({ open: [''], close: [''] }),
         saturday: this.fb.group({ open: [''], close: [''] }),
-        sunday: this.fb.group({ open: [''], close: [''] })
+        sunday: this.fb.group({ open: [''], close: [''] }),
       }),
       pricing: this.fb.group({
         monthly: [0],
         quarterly: [0],
         yearly: [0],
-        dayPass: [0]
+        dayPass: [0],
       }),
       capacity: [0],
-      images: this.fb.array([])
+      images: this.fb.array([]),
     });
   }
 
@@ -102,7 +101,7 @@ export class GymHallForm implements OnInit {
     this.equipment.push(
       this.fb.group({
         name: ['', Validators.required],
-        quantity: [1, Validators.required]
+        quantity: [1, Validators.required],
       })
     );
   }
@@ -142,9 +141,7 @@ export class GymHallForm implements OnInit {
   }
 
   isActivityTypeSelected(activityType: string): boolean {
-    return this.activityTypesArray.controls.some(
-      (control) => control.value === activityType
-    );
+    return this.activityTypesArray.controls.some((control) => control.value === activityType);
   }
 
   loadGymHall(id: string): void {
@@ -159,29 +156,37 @@ export class GymHallForm implements OnInit {
             contact: gymHall.contact,
             openingHours: gymHall.openingHours,
             pricing: gymHall.pricing,
-            capacity: gymHall.capacity
+            capacity: gymHall.capacity,
           });
 
-          gymHall.equipment?.forEach((eq) => {
-            this.equipment.push(this.fb.group(eq));
-          });
+          if (gymHall.equipment) {
+            for (const eq of gymHall.equipment) {
+              this.equipment.push(this.fb.group(eq));
+            }
+          }
 
-          gymHall.facilities?.forEach((fac) => {
-            this.facilities.push(this.fb.control(fac));
-          });
+          if (gymHall.facilities) {
+            for (const fac of gymHall.facilities) {
+              this.facilities.push(this.fb.control(fac));
+            }
+          }
 
-          gymHall.activityTypes?.forEach((type) => {
-            this.activityTypesArray.push(this.fb.control(type));
-          });
+          if (gymHall.activityTypes) {
+            for (const type of gymHall.activityTypes) {
+              this.activityTypesArray.push(this.fb.control(type));
+            }
+          }
 
-          gymHall.images?.forEach((img) => {
-            this.images.push(this.fb.control(img));
-          });
+          if (gymHall.images) {
+            for (const img of gymHall.images) {
+              this.images.push(this.fb.control(img));
+            }
+          }
         }
       },
       error: (err) => {
         this.errorMessage = err.error.message || 'Erreur lors du chargement de la salle';
-      }
+      },
     });
   }
 
@@ -196,7 +201,7 @@ export class GymHallForm implements OnInit {
           },
           error: (err) => {
             this.errorMessage = err.error.message || 'Erreur lors de la mise à jour';
-          }
+          },
         });
       } else {
         this.gymHallService.createGymHall(gymHallData).subscribe({
@@ -207,7 +212,7 @@ export class GymHallForm implements OnInit {
           },
           error: (err) => {
             this.errorMessage = err.error.message || 'Erreur lors de la création';
-          }
+          },
         });
       }
     }
