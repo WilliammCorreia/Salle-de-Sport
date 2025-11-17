@@ -3,14 +3,15 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GymHall } from '../models/gym-hall.model';
 import { ApiResponse } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GymHallService {
-  private apiUrl = 'http://localhost:5000/api/gym-halls';
+  private readonly apiUrl = `${environment.apiUrl}/gym-halls`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   createGymHall(gymHallData: any): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.post<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}`, gymHallData);
