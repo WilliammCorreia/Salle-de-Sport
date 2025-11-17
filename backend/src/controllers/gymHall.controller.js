@@ -219,11 +219,11 @@ exports.updateGymHall = async (req, res) => {
       'images',
     ];
 
-    allowedUpdates.forEach((field) => {
+    for (const field of allowedUpdates) {
       if (req.body[field] !== undefined) {
         gymHall[field] = req.body[field];
       }
-    });
+    }
 
     await gymHall.save();
 
