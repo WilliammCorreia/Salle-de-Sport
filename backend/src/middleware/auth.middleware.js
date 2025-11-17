@@ -43,12 +43,14 @@ exports.protect = async (req, res, next) => {
 
       next();
     } catch (error) {
+      console.error('Erreur de vérification du token:', error.message);
       return res.status(401).json({
         success: false,
         message: 'Token invalide ou expiré',
       });
     }
   } catch (error) {
+    console.error('Erreur d\'authentification:', error);
     res.status(500).json({
       success: false,
       message: "Erreur d'authentification",
@@ -85,12 +87,14 @@ exports.optionalAuth = async (req, res, next) => {
         req.user = await User.findById(decoded.id).select('-password');
       } catch (error) {
         // Si le token est invalide, on continue sans utilisateur
+        console.debug('Token invalide dans optionalAuth:', error.message);
         req.user = null;
       }
     }
 
     next();
   } catch (error) {
+    console.error('Erreur dans optionalAuth:', error);
     next();
   }
 };
