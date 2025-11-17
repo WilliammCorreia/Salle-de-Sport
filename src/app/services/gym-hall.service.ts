@@ -3,6 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { GymHall } from '../models/gym-hall.model';
 import { ApiResponse } from '../models/user.model';
+import { CreateGymHallDto, UpdateGymHallDto } from '../models/dto/gym-hall.dto';
+import { GymHallFilters } from '../models/filters.model';
+import { Pagination } from '../models/pagination.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -13,15 +16,15 @@ export class GymHallService {
 
   constructor(private readonly http: HttpClient) {}
 
-  createGymHall(gymHallData: any): Observable<ApiResponse<{ gymHall: GymHall }>> {
+  createGymHall(gymHallData: CreateGymHallDto): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.post<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}`, gymHallData);
   }
 
   getAllGymHalls(
     page = 1,
     limit = 10,
-    filters?: any
-  ): Observable<ApiResponse<{ gymHalls: GymHall[]; pagination: any }>> {
+    filters?: GymHallFilters
+  ): Observable<ApiResponse<{ gymHalls: GymHall[]; pagination: Pagination }>> {
     let params = new HttpParams().set('page', page.toString()).set('limit', limit.toString());
 
     if (filters) {
@@ -32,7 +35,7 @@ export class GymHallService {
       if (filters.search) params = params.set('search', filters.search);
     }
 
-    return this.http.get<ApiResponse<{ gymHalls: GymHall[]; pagination: any }>>(`${this.apiUrl}`, {
+    return this.http.get<ApiResponse<{ gymHalls: GymHall[]; pagination: Pagination }>>(`${this.apiUrl}`, {
       params,
     });
   }
@@ -41,12 +44,12 @@ export class GymHallService {
     return this.http.get<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}/${id}`);
   }
 
-  updateGymHall(id: string, gymHallData: any): Observable<ApiResponse<{ gymHall: GymHall }>> {
+  updateGymHall(id: string, gymHallData: UpdateGymHallDto): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.put<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}/${id}`, gymHallData);
   }
 
-  deleteGymHall(id: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`);
+  deleteGymHall(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 
   approveGymHall(id: string): Observable<ApiResponse<{ gymHall: GymHall }>> {

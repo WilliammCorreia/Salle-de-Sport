@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { GymHallService } from '../../services/gym-hall.service';
 import { AuthService } from '../../services/auth.service';
 import { GymHall } from '../../models/gym-hall.model';
+import { GymHallFilters } from '../../models/filters.model';
 
 @Component({
   selector: 'app-gym-halls-list',
@@ -17,7 +18,7 @@ export class GymHallsList implements OnInit {
   loading = false;
   searchTerm = '';
   cityFilter = '';
-
+  
   constructor(
     private readonly gymHallService: GymHallService,
     public authService: AuthService,
@@ -30,9 +31,7 @@ export class GymHallsList implements OnInit {
 
   loadGymHalls(): void {
     this.loading = true;
-    const filters: any = {};
-
-    if (this.searchTerm) filters.search = this.searchTerm;
+    const filters: GymHallFilters = {};    if (this.searchTerm) filters.search = this.searchTerm;
     if (this.cityFilter) filters.city = this.cityFilter;
 
     this.gymHallService.getAllGymHalls(1, 50, filters).subscribe({

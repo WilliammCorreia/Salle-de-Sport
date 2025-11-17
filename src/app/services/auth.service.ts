@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { User, AuthResponse, ApiResponse } from '../models/user.model';
+import { RegisterUserDto } from '../models/dto/user.dto';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -19,7 +20,7 @@ export class AuthService {
     this.loadStoredUser();
   }
 
-  register(userData: any): Observable<AuthResponse> {
+  register(userData: RegisterUserDto): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
       tap((response) => {
         if (response.success && response.data) {
@@ -60,8 +61,8 @@ export class AuthService {
     );
   }
 
-  updatePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/update-password`, {
+  updatePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/update-password`, {
       currentPassword,
       newPassword,
     });

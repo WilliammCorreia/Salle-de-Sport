@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 
@@ -81,7 +82,7 @@ export class UsersList implements OnInit {
         this.errorMessage = '';
         this.loadUsers();
       },
-      error: (err: any) => {
+      error: (err: HttpErrorResponse) => {
         this.errorMessage = err.error.message || 'Erreur lors de la modification du statut';
         this.successMessage = '';
       },
@@ -95,7 +96,7 @@ export class UsersList implements OnInit {
         this.errorMessage = '';
         this.loadUsers();
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.errorMessage = err.error.message || 'Erreur lors de la mise à jour du rôle';
         this.successMessage = '';
       },
@@ -110,7 +111,7 @@ export class UsersList implements OnInit {
           this.errorMessage = '';
           this.loadUsers();
         },
-        error: (err: any) => {
+        error: (err: HttpErrorResponse) => {
           this.errorMessage = err.error.message || 'Erreur lors de la suppression';
           this.successMessage = '';
         },

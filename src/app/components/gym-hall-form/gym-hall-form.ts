@@ -127,8 +127,9 @@ export class GymHallForm implements OnInit {
     this.images.removeAt(index);
   }
 
-  onActivityTypeChange(event: any, activityType: string): void {
-    if (event.target.checked) {
+  onActivityTypeChange(event: Event, activityType: string): void {
+    const target = event.target as HTMLInputElement;
+    if (target.checked) {
       this.activityTypesArray.push(this.fb.control(activityType));
     } else {
       const index = this.activityTypesArray.controls.findIndex(
