@@ -21,7 +21,7 @@ export class UsersList implements OnInit {
 
   roles = ['client', 'gym_owner', 'super_admin'];
 
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   ngOnInit(): void {
     this.loadUsers();

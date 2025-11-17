@@ -17,11 +17,11 @@ export class GymHallsList implements OnInit {
   loading = false;
   searchTerm = '';
   cityFilter = '';
-  
+
   constructor(
-    private gymHallService: GymHallService,
+    private readonly gymHallService: GymHallService,
     public authService: AuthService,
-    private router: Router
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -31,7 +31,7 @@ export class GymHallsList implements OnInit {
   loadGymHalls(): void {
     this.loading = true;
     const filters: any = {};
-    
+
     if (this.searchTerm) filters.search = this.searchTerm;
     if (this.cityFilter) filters.city = this.cityFilter;
 
@@ -44,7 +44,7 @@ export class GymHallsList implements OnInit {
       },
       error: () => {
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -60,7 +60,7 @@ export class GymHallsList implements OnInit {
     this.gymHallService.approveGymHall(id).subscribe({
       next: () => {
         this.loadGymHalls();
-      }
+      },
     });
   }
 
@@ -68,7 +68,7 @@ export class GymHallsList implements OnInit {
     this.gymHallService.rejectGymHall(id).subscribe({
       next: () => {
         this.loadGymHalls();
-      }
+      },
     });
   }
 }

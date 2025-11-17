@@ -19,9 +19,9 @@ export class Profile implements OnInit {
   successMessage = '';
 
   constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private fb: FormBuilder
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly fb: FormBuilder
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],

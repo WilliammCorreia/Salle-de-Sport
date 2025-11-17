@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
 export class Navbar {
   constructor(
     public authService: AuthService,
-    private router: Router
+    private readonly router: Router
   ) {}
 
   logout(): void {

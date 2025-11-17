@@ -32,10 +32,10 @@ export class GymHallForm implements OnInit {
   ];
 
   constructor(
-    private fb: FormBuilder,
-    private gymHallService: GymHallService,
-    private router: Router,
-    private route: ActivatedRoute
+    private readonly fb: FormBuilder,
+    private readonly gymHallService: GymHallService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {
     this.gymHallForm = this.fb.group({
       name: ['', Validators.required],

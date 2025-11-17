@@ -16,9 +16,9 @@ export class GymHallDetail implements OnInit {
   loading = false;
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private gymHallService: GymHallService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly gymHallService: GymHallService,
     public authService: AuthService
   ) {}
 
