@@ -10,6 +10,7 @@ const { notFound, errorHandler } = require('./src/middleware/error.middleware');
 const authRoutes = require('./src/routes/auth.routes');
 const userRoutes = require('./src/routes/user.routes');
 const gymHallRoutes = require('./src/routes/gymHall.routes');
+const exerciceRoutes = require('./src/routes/exercice.routes');
 
 // Initialisation de l'application Express
 const app = express();
@@ -46,10 +47,11 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/gym-halls', gymHallRoutes);
+app.use('/api/exercices-types', exerciceRoutes);
 
 // Middleware de gestion des erreurs
 app.use(notFound);
-app.use(errorHandler);
+  app.use(errorHandler);
 
 // Demarrage du serveur
 const PORT = process.env.PORT || 5000;
