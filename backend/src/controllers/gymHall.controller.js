@@ -1,5 +1,6 @@
 const GymHall = require('../models/GymHall.model');
 const User = require('../models/User.model');
+const logger = require('../config/logger');
 
 // @desc    Creer une nouvelle salle de sport
 // @route   POST /api/gym-halls
@@ -32,6 +33,10 @@ exports.createGymHall = async (req, res) => {
     // Verifier si une salle avec ce nom existe deja
     const existingGymHall = await GymHall.findOne({ name });
     if (existingGymHall) {
+      logger.warn('Tentative de création d\'une salle avec nom existant', {
+        userId: req.user.id,
+        name
+      });
       return res.status(400).json({
         success: false,
         message: 'Une salle avec ce nom existe déjà',
@@ -59,12 +64,27 @@ exports.createGymHall = async (req, res) => {
     // Ajouter la salle a la liste des salles du proprietaire
     await User.findByIdAndUpdate(req.user.id, { $push: { gymHalls: gymHall._id } });
 
+    logger.info('Nouvelle salle de sport créée', {
+      gymHallId: gymHall._id,
+      name: gymHall.name,
+      ownerId: req.user.id,
+      ownerEmail: req.user.email,
+      status: gymHall.status,
+      city: address?.city
+    });
+
     res.status(201).json({
       success: true,
       message: 'Salle de sport créée avec succès',
       data: { gymHall },
     });
   } catch (error) {
+    logger.error('Erreur lors de la création de la salle', {
+      error: error.message,
+      stack: error.stack,
+      userId: req.user?.id,
+      hallName: req.body.name
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création de la salle',
@@ -298,12 +318,25 @@ exports.approveGymHall = async (req, res) => {
     gymHall.status = 'approved';
     await gymHall.save();
 
+    logger.info('Salle de sport approuvée', {
+      adminId: req.user.id,
+      gymHallId: gymHall._id,
+      gymHallName: gymHall.name,
+      ownerId: gymHall.owner
+    });
+
     res.status(200).json({
       success: true,
       message: 'Salle de sport approuvée avec succès',
       data: { gymHall },
     });
   } catch (error) {
+    logger.error('Erreur lors de l\'approbation de la salle', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      gymHallId: req.params.id
+    });
     res.status(500).json({
       success: false,
       message: "Erreur lors de l'approbation de la salle",
@@ -329,12 +362,25 @@ exports.rejectGymHall = async (req, res) => {
     gymHall.status = 'rejected';
     await gymHall.save();
 
+    logger.warn('Salle de sport rejetée', {
+      adminId: req.user.id,
+      gymHallId: gymHall._id,
+      gymHallName: gymHall.name,
+      ownerId: gymHall.owner
+    });
+
     res.status(200).json({
       success: true,
       message: 'Salle de sport rejetée',
       data: { gymHall },
     });
   } catch (error) {
+    logger.error('Erreur lors du rejet de la salle', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      gymHallId: req.params.id
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors du rejet de la salle',
@@ -361,12 +407,25 @@ exports.suspendGymHall = async (req, res) => {
     gymHall.isActive = false;
     await gymHall.save();
 
+    logger.warn('Salle de sport suspendue', {
+      adminId: req.user.id,
+      gymHallId: gymHall._id,
+      gymHallName: gymHall.name,
+      ownerId: gymHall.owner
+    });
+
     res.status(200).json({
       success: true,
       message: 'Salle de sport suspendue',
       data: { gymHall },
     });
   } catch (error) {
+    logger.error('Erreur lors de la suspension de la salle', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      gymHallId: req.params.id
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suspension de la salle',

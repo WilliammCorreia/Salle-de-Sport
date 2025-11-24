@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./src/config/database');
+const logger = require('./src/config/logger');
+const requestLogger = require('./src/middleware/logger.middleware');
 const { notFound, errorHandler } = require('./src/middleware/error.middleware');
 
 // Importation des routes
@@ -16,6 +18,7 @@ const app = express();
 connectDB();
 
 // Middleware
+app.use(requestLogger); // Logger HTTP requests
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:4200',
@@ -51,9 +54,29 @@ app.use(errorHandler);
 // Demarrage du serveur
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-  console.log(`Environnement: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`API disponible sur: http://localhost:${PORT}`);
+  logger.info('Serveur démarré', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    url: `http://localhost:${PORT}`,
+    logLevel: process.env.LOG_LEVEL || 'info'
+  });
+});
+
+// Gestion des erreurs non capturees
+process.on('unhandledRejection', (err) => {
+  logger.error('Rejection non gérée détectée', {
+    error: err.message,
+    stack: err.stack
+  });
+  process.exit(1);
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('Exception non capturée détectée', {
+    error: err.message,
+    stack: err.stack
+  });
+  process.exit(1);
 });
 
 module.exports = app;
