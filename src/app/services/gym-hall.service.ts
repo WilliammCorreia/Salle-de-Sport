@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GymHall } from '../models/gym-hall.model';
+import { GymHall, CreateGymHall, UpdateGymHall } from '../models/gym-hall.model';
 import { ApiResponse } from '../models/user.model';
-import { CreateGymHallDto, UpdateGymHallDto } from '../models/dto/gym-hall.dto';
+
 import { GymHallFilters } from '../models/filters.model';
 import { Pagination } from '../models/pagination.model';
 import { environment } from '../../environments/environment';
@@ -16,7 +16,7 @@ export class GymHallService {
 
   constructor(private readonly http: HttpClient) {}
 
-  createGymHall(gymHallData: CreateGymHallDto): Observable<ApiResponse<{ gymHall: GymHall }>> {
+  createGymHall(gymHallData: CreateGymHall): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.post<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}`, gymHallData);
   }
 
@@ -35,16 +35,22 @@ export class GymHallService {
       if (filters.search) params = params.set('search', filters.search);
     }
 
-    return this.http.get<ApiResponse<{ gymHalls: GymHall[]; pagination: Pagination }>>(`${this.apiUrl}`, {
-      params,
-    });
+    return this.http.get<ApiResponse<{ gymHalls: GymHall[]; pagination: Pagination }>>(
+      `${this.apiUrl}`,
+      {
+        params,
+      }
+    );
   }
 
   getGymHallById(id: string): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.get<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}/${id}`);
   }
 
-  updateGymHall(id: string, gymHallData: UpdateGymHallDto): Observable<ApiResponse<{ gymHall: GymHall }>> {
+  updateGymHall(
+    id: string,
+    gymHallData: UpdateGymHall
+  ): Observable<ApiResponse<{ gymHall: GymHall }>> {
     return this.http.put<ApiResponse<{ gymHall: GymHall }>>(`${this.apiUrl}/${id}`, gymHallData);
   }
 

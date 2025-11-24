@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User, ApiResponse } from '../models/user.model';
-import { UpdateUserDto } from '../models/dto/user.dto';
+import { UpdateUser } from '../models/user.model';
 import { UserFilters } from '../models/filters.model';
 import { Pagination } from '../models/pagination.model';
 import { UserStats } from '../models/user-stats.model';
@@ -38,7 +38,7 @@ export class UserService {
     return this.http.get<ApiResponse<{ user: User }>>(`${this.apiUrl}/${id}`);
   }
 
-  updateUser(id: string, userData: UpdateUserDto): Observable<ApiResponse<{ user: User }>> {
+  updateUser(id: string, userData: UpdateUser): Observable<ApiResponse<{ user: User }>> {
     return this.http.put<ApiResponse<{ user: User }>>(`${this.apiUrl}/${id}`, userData);
   }
 
