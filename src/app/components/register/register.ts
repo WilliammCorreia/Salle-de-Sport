@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { RegisterUser } from '../../models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './register.css',
 })
 export class Register {
-  formData = {
+  formData: RegisterUser = {
     email: '',
     password: '',
     firstName: '',
@@ -22,10 +23,7 @@ export class Register {
   errorMessage = '';
   loading = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private readonly authService: AuthService, private readonly router: Router) {}
 
   onSubmit(): void {
     this.errorMessage = '';
@@ -38,12 +36,12 @@ export class Register {
         }
       },
       error: (error) => {
-        this.errorMessage = error.error?.message || 'Erreur lors de l\'inscription';
+        this.errorMessage = error.error?.message || "Erreur lors de l'inscription";
         this.loading = false;
       },
       complete: () => {
         this.loading = false;
-      }
+      },
     });
   }
 }

@@ -1,5 +1,6 @@
 const User = require('../models/User.model');
 const GymHall = require('../models/GymHall.model');
+const logger = require('../config/logger');
 
 // @desc    Obtenir tous les utilisateurs (avec pagination et filtres)
 // @route   GET /api/users
@@ -37,6 +38,13 @@ exports.getAllUsers = async (req, res) => {
 
     const total = await User.countDocuments(filter);
 
+    logger.info('Récupération de tous les utilisateurs', {
+      adminId: req.user.id,
+      totalUsers: total,
+      page,
+      filters: { role, isActive, search }
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -49,6 +57,11 @@ exports.getAllUsers = async (req, res) => {
       },
     });
   } catch (error) {
+    logger.error('Erreur lors de la récupération des utilisateurs', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des utilisateurs',
@@ -148,12 +161,24 @@ exports.deactivateUser = async (req, res) => {
     user.isActive = false;
     await user.save();
 
+    logger.warn('Utilisateur désactivé', {
+      adminId: req.user.id,
+      targetUserId: user._id,
+      targetEmail: user.email
+    });
+
     res.status(200).json({
       success: true,
       message: 'Utilisateur désactivé avec succès',
       data: { user },
     });
   } catch (error) {
+    logger.error('Erreur lors de la désactivation de l\'utilisateur', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      targetUserId: req.params.id
+    });
     res.status(500).json({
       success: false,
       message: "Erreur lors de la désactivation de l'utilisateur",
@@ -209,16 +234,33 @@ exports.deleteUser = async (req, res) => {
 
     // Si l'utilisateur est proprietaire de salles, gerer la suppression
     if (user.gymHalls && user.gymHalls.length > 0) {
+      logger.info('Suppression des salles associées à l\'utilisateur', {
+        userId: user._id,
+        gymHallsCount: user.gymHalls.length
+      });
       await GymHall.deleteMany({ _id: { $in: user.gymHalls } });
     }
 
     await user.deleteOne();
+
+    logger.warn('Utilisateur supprimé', {
+      adminId: req.user.id,
+      deletedUserId: user._id,
+      deletedEmail: user.email,
+      hadGymHalls: user.gymHalls?.length || 0
+    });
 
     res.status(200).json({
       success: true,
       message: 'Utilisateur supprimé avec succès',
     });
   } catch (error) {
+    logger.error('Erreur lors de la suppression de l\'utilisateur', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      targetUserId: req.params.id
+    });
     res.status(500).json({
       success: false,
       message: "Erreur lors de la suppression de l'utilisateur",
@@ -250,8 +292,17 @@ exports.updateUserRole = async (req, res) => {
       });
     }
 
+    const oldRole = user.role;
     user.role = role;
     await user.save();
+
+    logger.warn('Rôle utilisateur modifié', {
+      adminId: req.user.id,
+      targetUserId: user._id,
+      targetEmail: user.email,
+      oldRole,
+      newRole: role
+    });
 
     res.status(200).json({
       success: true,
@@ -259,6 +310,13 @@ exports.updateUserRole = async (req, res) => {
       data: { user },
     });
   } catch (error) {
+    logger.error('Erreur lors de la mise à jour du rôle', {
+      error: error.message,
+      stack: error.stack,
+      adminId: req.user?.id,
+      targetUserId: req.params.id,
+      attemptedRole: req.body.role
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du rôle',

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { GymHallService } from '../../services/gym-hall.service';
 import { AuthService } from '../../services/auth.service';
 import { GymHall } from '../../models/gym-hall.model';
+import { GymHallFilters } from '../../models/filters.model';
 
 @Component({
   selector: 'app-gym-halls-list',
@@ -19,9 +20,9 @@ export class GymHallsList implements OnInit {
   cityFilter = '';
   
   constructor(
-    private gymHallService: GymHallService,
+    private readonly gymHallService: GymHallService,
     public authService: AuthService,
-    private router: Router
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -30,9 +31,7 @@ export class GymHallsList implements OnInit {
 
   loadGymHalls(): void {
     this.loading = true;
-    const filters: any = {};
-    
-    if (this.searchTerm) filters.search = this.searchTerm;
+    const filters: GymHallFilters = {};    if (this.searchTerm) filters.search = this.searchTerm;
     if (this.cityFilter) filters.city = this.cityFilter;
 
     this.gymHallService.getAllGymHalls(1, 50, filters).subscribe({
@@ -44,7 +43,7 @@ export class GymHallsList implements OnInit {
       },
       error: () => {
         this.loading = false;
-      }
+      },
     });
   }
 
@@ -60,7 +59,7 @@ export class GymHallsList implements OnInit {
     this.gymHallService.approveGymHall(id).subscribe({
       next: () => {
         this.loadGymHalls();
-      }
+      },
     });
   }
 
@@ -68,7 +67,7 @@ export class GymHallsList implements OnInit {
     this.gymHallService.rejectGymHall(id).subscribe({
       next: () => {
         this.loadGymHalls();
-      }
+      },
     });
   }
 }

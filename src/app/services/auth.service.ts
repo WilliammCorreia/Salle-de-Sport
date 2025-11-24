@@ -3,22 +3,24 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { User, AuthResponse, ApiResponse } from '../models/user.model';
+import { RegisterUser } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5000/api/auth';
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  private isBrowser: boolean;
+  private readonly isBrowser: boolean;
 
-  constructor(private http: HttpClient, @Inject(PLATFORM_ID) platformId: object) {
+  constructor(private readonly http: HttpClient, @Inject(PLATFORM_ID) platformId: object) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.loadStoredUser();
   }
 
-  register(userData: any): Observable<AuthResponse> {
+  register(userData: RegisterUser): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
       tap((response) => {
         if (response.success && response.data) {
@@ -59,8 +61,8 @@ export class AuthService {
     );
   }
 
-  updatePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/update-password`, {
+  updatePassword(currentPassword: string, newPassword: string): Observable<ApiResponse<void>> {
+    return this.http.put<ApiResponse<void>>(`${this.apiUrl}/update-password`, {
       currentPassword,
       newPassword,
     });

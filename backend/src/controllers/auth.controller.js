@@ -1,5 +1,6 @@
 const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
+const logger = require('../config/logger');
 
 // Generer un token JWT
 const generateToken = (userId) => {
@@ -18,6 +19,7 @@ exports.register = async (req, res) => {
     // Verifier si l'utilisateur existe deja
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      logger.warn('Tentative d\'inscription avec email existant', { email });
       return res.status(400).json({
         success: false,
         message: 'Un utilisateur avec cet email existe déjà',
@@ -35,6 +37,12 @@ exports.register = async (req, res) => {
       address,
     });
 
+    logger.info('Nouvel utilisateur inscrit', {
+      userId: user._id,
+      email: user.email,
+      role: user.role
+    });
+
     // Generer le token
     const token = generateToken(user._id);
 
@@ -47,6 +55,11 @@ exports.register = async (req, res) => {
       },
     });
   } catch (error) {
+    logger.error('Erreur lors de l\'inscription', {
+      error: error.message,
+      stack: error.stack,
+      email: req.body.email
+    });
     res.status(500).json({
       success: false,
       message: "Erreur lors de l'inscription",
@@ -74,6 +87,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
+      logger.warn('Tentative de connexion avec email inexistant', { email });
       return res.status(401).json({
         success: false,
         message: 'Email ou mot de passe incorrect',
@@ -82,6 +96,10 @@ exports.login = async (req, res) => {
 
     // Verifier si le compte est actif
     if (!user.isActive) {
+      logger.warn('Tentative de connexion avec compte désactivé', {
+        userId: user._id,
+        email: user.email
+      });
       return res.status(403).json({
         success: false,
         message: 'Votre compte a été désactivé',
@@ -92,11 +110,21 @@ exports.login = async (req, res) => {
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
+      logger.warn('Tentative de connexion avec mot de passe incorrect', {
+        userId: user._id,
+        email: user.email
+      });
       return res.status(401).json({
         success: false,
         message: 'Email ou mot de passe incorrect',
       });
     }
+
+    logger.info('Connexion réussie', {
+      userId: user._id,
+      email: user.email,
+      role: user.role
+    });
 
     // Generer le token
     const token = generateToken(user._id);
@@ -110,6 +138,11 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
+    logger.error('Erreur lors de la connexion', {
+      error: error.message,
+      stack: error.stack,
+      email: req.body.email
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la connexion',
@@ -125,11 +158,21 @@ exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('gymHalls');
 
+    logger.debug('Récupération du profil utilisateur', {
+      userId: req.user.id,
+      email: req.user.email
+    });
+
     res.status(200).json({
       success: true,
       data: { user },
     });
   } catch (error) {
+    logger.error('Erreur lors de la récupération du profil', {
+      error: error.message,
+      stack: error.stack,
+      userId: req.user?.id
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du profil',
@@ -158,6 +201,10 @@ exports.updatePassword = async (req, res) => {
     const isPasswordValid = await user.comparePassword(currentPassword);
 
     if (!isPasswordValid) {
+      logger.warn('Tentative de changement de mot de passe avec ancien mot de passe incorrect', {
+        userId: req.user.id,
+        email: req.user.email
+      });
       return res.status(401).json({
         success: false,
         message: 'Mot de passe actuel incorrect',
@@ -168,11 +215,21 @@ exports.updatePassword = async (req, res) => {
     user.password = newPassword;
     await user.save();
 
+    logger.info('Mot de passe mis à jour', {
+      userId: req.user.id,
+      email: req.user.email
+    });
+
     res.status(200).json({
       success: true,
       message: 'Mot de passe mis à jour avec succès',
     });
   } catch (error) {
+    logger.error('Erreur lors de la mise à jour du mot de passe', {
+      error: error.message,
+      stack: error.stack,
+      userId: req.user?.id
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du mot de passe',

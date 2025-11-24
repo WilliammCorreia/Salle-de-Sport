@@ -19,9 +19,9 @@ export class Profile implements OnInit {
   successMessage = '';
 
   constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private fb: FormBuilder
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly fb: FormBuilder
   ) {
     this.profileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -53,10 +53,13 @@ export class Profile implements OnInit {
   updateProfile(): void {
     if (this.profileForm.valid && this.user) {
       this.userService.updateUser(this.user._id, this.profileForm.value).subscribe({
-        next: (updatedUser) => {
+        next: (response) => {
           this.successMessage = 'Profil mis à jour avec succès';
           this.errorMessage = '';
-          localStorage.setItem('user', JSON.stringify(updatedUser));
+          if (response.data?.user) {
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            this.user = response.data.user;
+          }
         },
         error: (err) => {
           this.errorMessage = err.error.message || 'Erreur lors de la mise à jour du profil';

@@ -26,12 +26,10 @@ services:
     restart: unless-stopped
     ports:
       - '5000:5000'
+    env_file:
+      - ./backend/.env.docker
     environment:
-      NODE_ENV: development
-      PORT: 5000
-      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/tspark?authSource=admin
-      JWT_SECRET: votre_secret_jwt_super_securise_changez_moi
-      JWT_EXPIRE: 7d
+      MONGODB_URI: mongodb://admin:admin123@mongodb:27017/salle-de-sport?authSource=admin
     depends_on:
       - mongodb
     volumes:
@@ -58,7 +56,7 @@ services:
       - /app/.angular
     networks:
       - tspark-network
-    command: npm start
+    command: npm start -- --host 0.0.0.0 --poll
     depends_on:
       - backend
 
