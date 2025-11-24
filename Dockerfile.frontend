@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 4200
 
 # Commande de démarrage
-CMD ["npm", "start", "--", "--host", "0.0.0.0", "--poll"]
+CMD ["npm", "start", "--", "--host", "0.0.0.0", "--disable-host-check", "--poll"]

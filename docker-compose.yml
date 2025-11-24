@@ -56,7 +56,7 @@ services:
       - /app/.angular
     networks:
       - tspark-network
-    command: npm start
+    command: npm start -- --host 0.0.0.0 --poll
     depends_on:
       - backend
 
