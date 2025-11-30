@@ -1,4 +1,5 @@
 const Challenge = require('../models/Challenge.model');
+const gymHallModel = require('../models/GymHall.model');
 
 // @desc    Creer un nouveau défi
 // @route   POST /api/challenges
@@ -6,7 +7,6 @@ const Challenge = require('../models/Challenge.model');
 exports.createChallenge = async (req, res) => {
     try {
         const creator = req.user._id.toString();
-        let gymHall = null;
 
         const {
             title,
@@ -16,29 +16,19 @@ exports.createChallenge = async (req, res) => {
             duration,
             durationUnit,
             exercises,
-            participants,
-            isActive,
+            isActive =  true,
+            equipment = [],
+            gymHall = null
         } = req.body;
 
-        console.log("test :", req.user._id);
-        if (req.body.gymHall) {
-            if (req.user.role !== 'gym_owner' && req.user.role !== 'super_admin') {
+        if (gymHall) {
+            const validation = await validateGymAndEquipment(req.user, gymHall, equipment);
+            if (validation) {
                 return res.status(403).json({
                     success: false,
-                    message: 'Seuls les propriétaires de salles de sport et les super administrateurs peuvent attribuer une salle de sport à un défi',
+                    message: validation,
                 });
             }
-
-            const isOwner = req.user.gymHalls.some(id => id.toString() === req.body.gymHall);
-      
-            if (!isOwner && req.user.role !== 'super_admin') {
-                return res.status(403).json({
-                success: false,
-                message: "Vous n'êtes pas le propriétaire de cette salle."
-                });
-            }
-
-            gymHall = req.body.gymHall;
         }
 
         const existingChallenge = await Challenge.findOne({ title });
@@ -54,12 +44,13 @@ exports.createChallenge = async (req, res) => {
             description,
             creator,
             gymHall,
+            equipment,
             category,
             difficulty,
             duration,
             durationUnit,
             exercises,
-            participants,
+            participants: [],
             isActive,
         });
 
@@ -75,3 +66,191 @@ exports.createChallenge = async (req, res) => {
         });
     }
 }
+
+// @desc    Récupérer tous les défis
+// @route   GET /api/challenges
+// @access  Private (utilisateurs authentifiés)
+exports.getChallenges = async (req, res) => {
+    try {
+        const challenges = await Challenge.find()
+            .populate('creator', 'firstName lastName')
+            .populate('gymHall', 'name')
+            .populate('exercises.exerciseType');
+
+        res.status(200).json({
+            success: true,
+            data: challenges,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des défis',
+            error: err.message,
+        });
+    }
+}
+
+// @desc    Récupérer un défi par ID
+// @route   GET /api/challenges/:id
+// @access  Private (utilisateurs authentifiés)
+exports.getChallengeById = async (req, res) => {
+    try {
+        const challenge = await Challenge.findById(req.params.id)
+            .populate('creator', 'firstName lastName')
+            .populate('gymHall', 'name')
+            .populate('exercises.exerciseType');
+
+        if (!challenge) {
+            return res.status(404).json({
+                success: false,
+                message: 'Défi non trouvé',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: challenge,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération du défi',
+            error: err.message,
+        });
+    }
+}
+
+// @desc    Mettre à jour un défi par ID
+// @route   PUT /api/challenges/:id
+// @access  Private (utilisateurs authentifiés)
+exports.updateChallenge = async (req, res) => {
+    try {
+        const challengeToUpdate = req.challenge;
+        const updates = req.body;
+        const creator = req.user;
+        
+        const gymHallId = (updates.gymHall !== undefined) ? updates.gymHall : challengeToUpdate.gymHall;
+        const equipmentList = (updates.equipment !== undefined) ? updates.equipment : challengeToUpdate.equipment;
+
+        const gymHallChanged = updates.gymHall !== undefined && updates.gymHall.toString() !== challengeToUpdate.gymHall?.toString();
+        const equipmentChanged = updates.equipment !== undefined && JSON.stringify(updates.equipment) !== JSON.stringify(challengeToUpdate.equipment);
+
+        if (gymHallChanged || equipmentChanged) {
+            const validation = await validateGymAndEquipment(creator, gymHallId, equipmentList);
+            if (validation) {
+                return res.status(403).json({
+                    success: false,
+                    message: validation,
+                });
+            }
+        }
+
+        const allowableFields = [
+            "title",
+            "description",
+            "gymHall",
+            "equipment",
+            "category",
+            "difficulty",
+            "duration",
+            "durationUnit",
+            "exercises",
+            "isActive"
+        ];
+
+        allowableFields.forEach(field => {
+            if (updates[field] !== undefined) {
+                challengeToUpdate[field] = updates[field];
+            }
+        });
+    
+        const savedChallenge = await challengeToUpdate.save();
+
+        if (!savedChallenge) {
+            return res.status(404).json({
+                success: false,
+                message: 'Erreur lors de la mise à jour du défi',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: savedChallenge,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la mise à jour du défi',
+            error: err.message,
+        });
+    }
+}
+
+// @desc    Supprimer un défi par ID
+// @route   DELETE /api/challenges/:id
+// @access  Private (créateur du défi ou super_admin)
+exports.deleteChallenge = async (req, res) => {
+    try {
+        const challengeToDelete = req.challenge;
+
+        const deletedChallenge = await Challenge.findByIdAndDelete(challengeToDelete._id);
+
+        if (!deletedChallenge) {
+            return res.status(404).json({
+                success: false,
+                message: 'Erreur lors de la suppression du défi',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Défi supprimé avec succès',
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la suppression du défi',
+            error: err.message,
+        });
+    }
+}
+
+/**
+ * Vérifie si l'utilisateur a le droit d'utiliser cette salle
+ * ET si la salle possède les équipements demandés.
+ * Retourne null si tout est OK, ou un message d'erreur (string).
+ */
+const validateGymAndEquipment = async (user, gymId, equipmentList) => {
+    // Vérification Propriétaire Salle
+    if (gymId) {
+        const isSuperAdmin = user.role === 'super_admin';
+        const isGymOwner = user.role === 'gym_owner';
+
+        if (!isGymOwner && !isSuperAdmin) {
+            return "Seuls les propriétaires et admins peuvent lier une salle.";
+        }
+
+        const ownsGym = user.gymHalls.some(id => id.toString() === gymId.toString());
+        if (!ownsGym && !isSuperAdmin) {
+            return "Vous n'êtes pas le propriétaire de cette salle.";
+        }
+    }
+
+    // Vérification Équipement
+    if (equipmentList && equipmentList.length > 0 && gymId) {
+        const gymHallData = await gymHallModel.findById(gymId).select('equipment');
+        if (!gymHallData) return "Salle de sport introuvable.";
+        console.log("gymHallData", gymHallData);
+
+        const gymHallEquipment = gymHallData.equipment.map(e => e.name);
+        const gymHallDataSet = new Set(gymHallEquipment);
+        
+        const missingEquipment = equipmentList.filter(item => !gymHallDataSet.has(item));
+        
+        if (missingEquipment.length > 0) {
+            return `Équipement manquant dans la salle : ${missingEquipment.join(', ')}`;
+        }
+    }
+
+    return null;
+};

@@ -3,12 +3,15 @@ const { body } = require('express-validator');
 const challengeController = require('../controllers/challenge.controller');
 const { protect, authorize } = require('../middleware/auth.middleware');
 const { validate } = require('../middleware/validator.middleware');
+const { isChallengeOwnerOrAdmin } = require('../middleware/challenge.middleware');
 const router = express.Router();
 
 const ChallengeValidation = [
     body('title').trim().notEmpty().withMessage('Le titre du défi est requis'),
     body('description').trim().notEmpty().withMessage('La description du défi est requise'),
     body('gymHall').optional().isMongoId().withMessage("ID de la salle de sport invalide"),
+    body('equipment').optional().isArray(),
+    body('equipment.*').isString().withMessage("Équipement invalide"),
     body('category').isIn(['perte_poids', 'prise_masse', 'endurance', 'force', 'souplesse', 'autre']),
     body('difficulty').optional().isIn(['débutant', 'intermédiaire', 'avancé', 'expert']),
     body('duration').isInt({ min: 1 }).withMessage('La durée doit être un entier supérieur à 0'),
@@ -23,6 +26,24 @@ const ChallengeValidation = [
     body('isActive').optional().isBoolean(),
 ];
 
+// @route   GET /api/challenges
+// @desc    Récupérer tous les défis
+// @access  Private (utilisateurs authentifiés)
+router.get(
+    "/", 
+    protect, 
+    challengeController.getChallenges
+);
+
+// @route   GET /api/challenges/:id
+// @desc    Récupérer un défi par ID
+// @access  Private (utilisateurs authentifiés)
+router.get(
+    "/:id", 
+    protect, 
+    challengeController.getChallengeById
+);
+
 // @route   POST /api/challenges
 // @desc    Creer un nouveau défi
 // @access  Private (utilisateurs authentifiés)
@@ -32,6 +53,28 @@ router.post(
     ChallengeValidation,
     validate,
     challengeController.createChallenge
+);
+
+// @route   PUT /api/challenges/:id
+// @desc    Mettre à jour un défi par ID
+// @access  Private (créateur du défi ou super_admin)
+router.put(
+    "/:id",
+    protect,
+    ChallengeValidation,
+    validate,
+    isChallengeOwnerOrAdmin,
+    challengeController.updateChallenge
+);
+
+// @route   DELETE /api/challenges/:id
+// @desc    Supprimer un défi par ID
+// @access  Private (créateur du défi ou super_admin)
+router.delete(
+    "/:id",
+    protect,
+    isChallengeOwnerOrAdmin,
+    challengeController.deleteChallenge
 );
 
 module.exports = router;

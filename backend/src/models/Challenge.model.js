@@ -22,6 +22,11 @@ const challengeSchema = new mongoose.Schema(
       ref: 'GymHall',
       default: null,
     },
+    equipment: [
+      {
+        type: String,
+      }
+    ],
     category: {
       type: String,
       required: true,
