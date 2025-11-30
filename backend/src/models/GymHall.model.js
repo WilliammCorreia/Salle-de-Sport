@@ -93,6 +93,7 @@ const gymHallSchema = new mongoose.Schema(
           'natation',
           'arts_martiaux',
           'fitness',
+          'escalade',
           'autre',
         ],
       },
