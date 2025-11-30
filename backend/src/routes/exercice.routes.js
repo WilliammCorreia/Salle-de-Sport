@@ -15,14 +15,21 @@ const ExercicesTypesValidation = [
 
 // @route   GET /api/exercices-types
 // @desc    Recuperer tous les types d'exercices avec pagination
-// @access  Private (super_admin)
+// @access  Private (utilisateurs authentifiés)
 router.get(
     "/",
     protect,
-    authorize('super_admin'),
     exercicesTypesController.getAllExerciceTypes
 );
 
+// @route   GET /api/exercices-types/:id
+// @desc    Recuperer un type d'exercice par ID
+// @access  Private (utilisateurs authentifiés)
+router.get(
+    "/:id",
+    protect,
+    exercicesTypesController.getExerciceTypeById
+)
 
 // @route   POST /api/exercices-types
 // @desc    Creer un nouveau type d'exercice

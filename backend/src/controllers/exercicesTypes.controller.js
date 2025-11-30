@@ -36,6 +36,31 @@ exports.getAllExerciceTypes = async (req, res) => {
     }
 }
 
+exports.getExerciceTypeById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const exerciceType = await ExercicesTypes.findById(id);
+        if (!exerciceType) {
+            return res.status(404).json({
+                success: false,
+                message: 'Type d\'exercice non trouvé',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: exerciceType,
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération du type d\'exercice',
+            error: err.message,
+        });
+    }
+}
+
 // @desc    Creer un nouveau type d'exercice
 // @route   POST /api/exercices-types
 // @access  Private (super_admin)

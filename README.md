@@ -63,3 +63,13 @@ docker-compose exec backend npm run seed
 - **PUT** `/api/gym-halls/:id/approve` - Route pour approuver une salle de sport
 - **PUT** `/api/gym-halls/:id/reject` - Route pour rejeter une salle de sport
 - **PUT** `/api/gym-halls/:id/suspend` - Route pour suspendre une salle de sport
+
+### Types d'Exercices
+- **GET** `/api/exercices-types` - Route pour obtenir la liste de tous les types d'exercices : utilisateur authentifié.
+- **GET** `/api/exercices-types/:id` - Récupérer un type d'exercice par ID. Accès : utilisateur authentifié.
+- **POST** `/api/exercices-types` - Créer un nouveau type d'exercice. Accès : super_admin. Body attendu (JSON) :
+  - name (string, requis)
+  - description (string, requis)
+  - muscleGroups (array de strings, au moins 1 élément)
+- **PUT** `/api/exercices-types/:id` - Mettre à jour un type d'exercice par ID. Accès : super_admin. Même body que pour la création.
+- **DELETE** `/api/exercices-types/:id` - Supprimer un type d'exercice par ID. Accès : super_admin.
