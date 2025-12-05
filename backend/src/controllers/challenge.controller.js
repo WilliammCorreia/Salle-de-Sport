@@ -14,7 +14,6 @@ exports.createChallenge = async (req, res) => {
             category,
             difficulty,
             duration,
-            durationUnit,
             exercises,
             isActive =  true,
             equipment = [],
@@ -48,7 +47,6 @@ exports.createChallenge = async (req, res) => {
             category,
             difficulty,
             duration,
-            durationUnit,
             exercises,
             participants: [],
             isActive,
@@ -71,8 +69,36 @@ exports.createChallenge = async (req, res) => {
 // @route   GET /api/challenges
 // @access  Private (utilisateurs authentifiés)
 exports.getChallenges = async (req, res) => {
+    const query = req.query;
+    const filter = {};
+
+    console.log("query;:", query)
+
+    if (query.difficulty) {
+        const difficulties = ['débutant', 'intermédiaire', 'avancé', 'expert'];
+
+        if (!difficulties.includes(query.difficulty)) {
+            throw new Error('La difficulté renseignées est introuvable');
+        }
+
+        filter.difficulty = query.difficulty;
+    }
+
+    if (query.minDuration) filter.duration = { $gte: query.minDuration };
+    if (query.maxDuration) filter.duration = { $lte: query.maxDuration };
+    if (query.minDuration && query.maxDuration) filter.duration = { $gte: query.minDuration, $lte: query.maxDuration };
+
+    if (query.exercicesTypes) {
+        if (!Array.isArray(query.exercicesTypes)) {
+            filter["exercises.exerciseType"] = { $in: query.exercicesTypes };
+        } else {
+            filter["exercises.exerciseType"] = { $all: query.exercicesTypes };
+        }
+        console.log("filter exercicesTypes:", filter);
+    }
+
     try {
-        const challenges = await Challenge.find()
+        const challenges = await Challenge.find(filter)
             .populate('creator', 'firstName lastName')
             .populate('gymHall', 'name')
             .populate('exercises.exerciseType');
@@ -153,7 +179,6 @@ exports.updateChallenge = async (req, res) => {
             "category",
             "difficulty",
             "duration",
-            "durationUnit",
             "exercises",
             "isActive"
         ];

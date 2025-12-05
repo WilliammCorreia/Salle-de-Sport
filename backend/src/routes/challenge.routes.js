@@ -15,7 +15,6 @@ const ChallengeValidation = [
     body('category').isIn(['perte_poids', 'prise_masse', 'endurance', 'force', 'souplesse', 'autre']),
     body('difficulty').optional().isIn(['débutant', 'intermédiaire', 'avancé', 'expert']),
     body('duration').isInt({ min: 1 }).withMessage('La durée doit être un entier supérieur à 0'),
-    body('durationUnit').optional().isIn(['jours', 'semaines']),
     body('exercises').isArray({ min: 1 }).withMessage('Au moins un exercice est requis'),
     body('exercises.*.exerciseType').isMongoId().withMessage("ID de type d'exercice invalide"),
     body('exercises.*.sets').optional().isInt({ min: 1 }).withMessage('Le nombre de séries doit être un entier supérieur à 0'),

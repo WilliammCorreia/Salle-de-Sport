@@ -42,11 +42,6 @@ const challengeSchema = new mongoose.Schema(
       required: [true, 'La durée du défi est requise'],
       min: 1, 
     },
-    durationUnit: {
-      type: String,
-      enum: ['jours', 'semaines'],
-      default: 'jours',
-    },
     exercises: [
       {
         exerciseType: {
