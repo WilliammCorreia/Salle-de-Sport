@@ -79,6 +79,7 @@ docker-compose exec backend npm run seed
   - `difficulty` : `débutant`, `intermédiaire`, `avancé`, `expert`
   - `minDuration` / `maxDuration` : filtrer par durée
   - `exercicesTypes` : array d'IDs de types d'exercices
+  - `gymHall` : ID d'une salle de sport
 - **GET** `/api/challenges/:id` - Récupérer un défi par ID. Accès : utilisateurs authentifiés.
 - **POST** `/api/challenges` - Créer un nouveau défi. Accès : utilisateurs authentifiés (protect). Body (JSON) attendu :
   - title (string, requis)

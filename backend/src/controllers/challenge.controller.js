@@ -94,6 +94,8 @@ exports.getChallenges = async (req, res) => {
         }
     }
 
+    if (query.gymHall) filter.gymHall = query.gymHall;
+
     try {
         const challenges = await Challenge.find(filter)
             .populate('creator', 'firstName lastName')
