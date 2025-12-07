@@ -33,9 +33,9 @@ exports.createGymHall = async (req, res) => {
     // Verifier si une salle avec ce nom existe deja
     const existingGymHall = await GymHall.findOne({ name });
     if (existingGymHall) {
-      logger.warn('Tentative de création d\'une salle avec nom existant', {
+      logger.warn("Tentative de création d'une salle avec nom existant", {
         userId: req.user.id,
-        name
+        name,
       });
       return res.status(400).json({
         success: false,
@@ -70,7 +70,7 @@ exports.createGymHall = async (req, res) => {
       ownerId: req.user.id,
       ownerEmail: req.user.email,
       status: gymHall.status,
-      city: address?.city
+      city: address?.city,
     });
 
     res.status(201).json({
@@ -83,7 +83,7 @@ exports.createGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       userId: req.user?.id,
-      hallName: req.body.name
+      hallName: req.body.name,
     });
     res.status(500).json({
       success: false,
@@ -165,9 +165,10 @@ exports.getAllGymHalls = async (req, res) => {
 // @access  Public
 exports.getGymHallById = async (req, res) => {
   try {
-    const gymHall = await GymHall.findById(req.params.id)
-      .populate('owner', 'firstName lastName email phone')
-      .populate('proposedChallenges');
+    const gymHall = await GymHall.findById(req.params.id).populate(
+      'owner',
+      'firstName lastName email phone'
+    );
 
     if (!gymHall) {
       return res.status(404).json({
@@ -322,7 +323,7 @@ exports.approveGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -331,11 +332,11 @@ exports.approveGymHall = async (req, res) => {
       data: { gymHall },
     });
   } catch (error) {
-    logger.error('Erreur lors de l\'approbation de la salle', {
+    logger.error("Erreur lors de l'approbation de la salle", {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
@@ -366,7 +367,7 @@ exports.rejectGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -379,7 +380,7 @@ exports.rejectGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
@@ -411,7 +412,7 @@ exports.suspendGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -424,7 +425,7 @@ exports.suspendGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
