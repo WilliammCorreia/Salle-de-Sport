@@ -72,8 +72,6 @@ exports.getChallenges = async (req, res) => {
     const query = req.query;
     const filter = {};
 
-    console.log("query;:", query)
-
     if (query.difficulty) {
         const difficulties = ['débutant', 'intermédiaire', 'avancé', 'expert'];
 
@@ -94,7 +92,6 @@ exports.getChallenges = async (req, res) => {
         } else {
             filter["exercises.exerciseType"] = { $all: query.exercicesTypes };
         }
-        console.log("filter exercicesTypes:", filter);
     }
 
     try {
@@ -265,7 +262,6 @@ const validateGymAndEquipment = async (user, gymId, equipmentList) => {
     if (equipmentList && equipmentList.length > 0 && gymId) {
         const gymHallData = await gymHallModel.findById(gymId).select('equipment');
         if (!gymHallData) return "Salle de sport introuvable.";
-        console.log("gymHallData", gymHallData);
 
         const gymHallEquipment = gymHallData.equipment.map(e => e.name);
         const gymHallDataSet = new Set(gymHallEquipment);
