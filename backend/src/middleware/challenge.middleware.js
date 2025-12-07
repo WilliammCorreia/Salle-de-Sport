@@ -21,21 +21,22 @@ exports.isChallengeOwnerOrAdmin = async (req, res, next) => {
         }
 
         // Vérifier si l'utilisateur est le créateur du défi ou un administrateur
-        if (challengeData.creator.toString() !== user.id && user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Accès refusé - Vous n\'êtes pas le créateur du défi ou un administrateur',
-            });
+        if (challengeData.creator.toString() !== user.id) {
+            if (user.role !== 'super_admin') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Accès refusé - Vous n\'êtes pas le créateur du défi ou un administrateur',
+                });
+            }
         }
 
         req.challenge = challengeData;
 
         next();
     } catch (error) {
-        console.error('Erreur dans le middleware isOwnerOrAdmin :', error);
         res.status(500).json({
             success: false,
-            message: 'Erreur serveur',
+            message: 'Erreur dans le middleware isOwnerOrAdmin :', error,
         });
     }
 }
