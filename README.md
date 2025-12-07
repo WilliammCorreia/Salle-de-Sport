@@ -75,7 +75,10 @@ docker-compose exec backend npm run seed
 - **DELETE** `/api/exercices-types/:id` - Supprimer un type d'exercice par ID. Accès : super_admin.
 
 ### Défis
-- **GET** `/api/challenges` - Récupérer tous les défis. Accès : utilisateurs authentifiés (protect).
+ **GET** `/api/challenges` - Récupérer tous les défis. Accès : utilisateurs authentifiés. Query params optionnels :
+  - `difficulty` : `débutant`, `intermédiaire`, `avancé`, `expert`
+  - `minDuration` / `maxDuration` : filtrer par durée
+  - `exercicesTypes` : array d'IDs de types d'exercices
 - **GET** `/api/challenges/:id` - Récupérer un défi par ID. Accès : utilisateurs authentifiés.
 - **POST** `/api/challenges` - Créer un nouveau défi. Accès : utilisateurs authentifiés (protect). Body (JSON) attendu :
   - title (string, requis)
