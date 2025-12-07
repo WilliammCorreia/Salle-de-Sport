@@ -25,6 +25,10 @@ const ChallengeValidation = [
     body('isActive').optional().isBoolean(),
 ];
 
+const ChallengeInvitationValidation = [
+    body('email').isEmail().withMessage("ID de destinataire invalide"),
+];
+
 // @route   GET /api/challenges
 // @desc    Récupérer tous les défis
 // @access  Private (utilisateurs authentifiés)
@@ -74,6 +78,17 @@ router.delete(
     protect,
     isChallengeOwnerOrAdmin,
     challengeController.deleteChallenge
+);
+
+// @route   POST /api/challenges/:id/invite
+// @desc    Inviter des utilisateurs à participer à un défi
+// @access  Private (utilisateurs authentifiés)
+router.post(
+    "/:id/invite",
+    protect,
+    ChallengeInvitationValidation,
+    validate,
+    challengeController.inviteUserToChallenge
 );
 
 module.exports = router;

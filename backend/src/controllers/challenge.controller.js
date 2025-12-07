@@ -1,5 +1,7 @@
 const Challenge = require('../models/Challenge.model');
 const gymHallModel = require('../models/GymHall.model');
+const ChallengeInvitation = require('../models/ChallengeInvitation.model');
+const User = require('../models/User.model');
 
 // @desc    Creer un nouveau défi
 // @route   POST /api/challenges
@@ -238,6 +240,58 @@ exports.deleteChallenge = async (req, res) => {
         });
     }
 }
+
+// @desc    Inviter un utilisateur à un défi
+// @route   POST /api/challenges/:id/invite
+exports.inviteUserToChallenge = async (req, res) => {
+    try {
+        const challengeId = req.params.id;
+        const senderId = req.user.id;
+        const { email } = req.body;
+
+        const recipient = await User.findOne({ email });
+        if (!recipient) {
+            return res.status(404).json({ success: false, message: "Utilisateur introuvable avec cet email." });
+        }
+
+        if (recipient._id.toString() === senderId) {
+            return res.status(400).json({ success: false, message: "Vous ne pouvez pas vous inviter vous-même." });
+        }
+
+        const challenge = await Challenge.findById(challengeId);
+        if (!challenge) {
+            return res.status(404).json({ success: false, message: "Défi introuvable." });
+        }
+
+        const existingInvite = await ChallengeInvitation.findOne({
+            challenge: challengeId,
+            recipient: recipient._id
+        });
+
+        if (existingInvite) {
+            return res.status(400).json({ success: false, message: "Cet utilisateur a déjà été invité." });
+        }
+
+        const invitation = await ChallengeInvitation.create({
+            sender: senderId,
+            recipient: recipient._id,
+            challenge: challengeId,
+            status: 'pending'
+        });
+
+        res.status(201).json({
+            success: true,
+            message: `Invitation envoyée à ${recipient.firstName}`,
+            data: invitation
+        });
+    } catch (err) {
+        res.status(500).json({ 
+            success: false, 
+            message: "Erreur lors de l'envoi de l'invitation.",
+            error: err.message 
+        });
+    }
+};
 
 /**
  * Vérifie si l'utilisateur a le droit d'utiliser cette salle
