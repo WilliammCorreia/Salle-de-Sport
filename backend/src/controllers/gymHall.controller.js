@@ -166,8 +166,7 @@ exports.getAllGymHalls = async (req, res) => {
 exports.getGymHallById = async (req, res) => {
   try {
     const gymHall = await GymHall.findById(req.params.id)
-      .populate('owner', 'firstName lastName email phone')
-      .populate('proposedChallenges');
+      .populate('owner', 'firstName lastName email phone');
 
     if (!gymHall) {
       return res.status(404).json({
