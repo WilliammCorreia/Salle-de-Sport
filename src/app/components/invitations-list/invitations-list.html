@@ -1,0 +1,23 @@
+<div class="container">
+  <h2>Invitations reçues</h2>
+
+  <div *ngIf="loading">Chargement...</div>
+
+  <div *ngIf="!loading && invitations.length === 0">
+    <p>Vous n'avez aucune invitation en attente.</p>
+  </div>
+
+  <div class="invitation-list">
+    <div *ngFor="let invite of invitations" class="invite-card">
+      <div class="invite-info">
+        <p><strong>{{ invite.sender.firstName }} {{ invite.sender.lastName }}</strong> vous invite à rejoindre :</p>
+        <h4>{{ invite.challenge.title }}</h4>
+        <span class="badge">{{ invite.challenge.difficulty }}</span>
+      </div>
+      <div class="invite-actions">
+        <button (click)="respond(invite._id, 'accepted')" class="btn-accept">Accepter</button>
+        <button (click)="respond(invite._id, 'rejected')" class="btn-reject">Refuser</button>
+      </div>
+    </div>
+  </div>
+</div>
