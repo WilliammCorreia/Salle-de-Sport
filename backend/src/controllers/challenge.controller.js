@@ -241,6 +241,37 @@ exports.deleteChallenge = async (req, res) => {
     }
 }
 
+// @desc    Rejoindre un défi
+// @route   POST /api/challenges/:id/join
+exports.joinChallenge = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const challengeId = req.params.id;
+
+        const challenge = await Challenge.findByIdAndUpdate(
+            challengeId,
+            { $addToSet: { participants: userId } },
+            { new: true }
+        );
+
+        if (!challenge) {
+            return res.status(404).json({ success: false, message: 'Défi introuvable' });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Vous avez rejoint le défi !',
+            data: challenge
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: 'Erreur lors de la tentative de rejoindre le défi.',
+            error: error.message 
+        });
+    }
+};
+
 // @desc    Inviter un utilisateur à un défi
 // @route   POST /api/challenges/:id/invite
 exports.inviteUserToChallenge = async (req, res) => {

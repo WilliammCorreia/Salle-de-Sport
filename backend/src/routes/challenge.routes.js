@@ -80,6 +80,15 @@ router.delete(
     challengeController.deleteChallenge
 );
 
+// @route   POST /api/challenges/:id/join
+// @desc    Rejoindre un défi
+// @access  Private (utilisateurs authentifiés)
+router.post(
+    '/:id/join', 
+    protect, 
+    challengeController.joinChallenge
+);
+
 // @route   POST /api/challenges/:id/invite
 // @desc    Inviter des utilisateurs à participer à un défi
 // @access  Private (utilisateurs authentifiés)

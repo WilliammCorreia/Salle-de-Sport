@@ -75,7 +75,7 @@ docker-compose exec backend npm run seed
 - **DELETE** `/api/exercices-types/:id` - Supprimer un type d'exercice par ID. Accès : super_admin.
 
 ### Défis
- **GET** `/api/challenges` - Récupérer tous les défis. Accès : utilisateurs authentifiés. Query params optionnels :
+- **GET** `/api/challenges` - Récupérer tous les défis. Accès : utilisateurs authentifiés. Query params optionnels :
   - `difficulty` : `débutant`, `intermédiaire`, `avancé`, `expert`
   - `minDuration` / `maxDuration` : filtrer par durée
   - `exercicesTypes` : array d'IDs de types d'exercices
@@ -95,6 +95,7 @@ docker-compose exec backend npm run seed
   - options : gymHall (ObjectId), equipment (array de strings), difficulty (`débutant`|`intermédiaire`|`avancé`|`expert`), durationUnit (`jours`|`semaines`), participants (array d'ObjectId), isActive (boolean)
 - **PUT** `/api/challenges/:id` - Mettre à jour un défi par ID. Accès : créateur du défi ou `super_admin`. Même body que pour la création.
 - **DELETE** `/api/challenges/:id` - Supprimer un défi par ID. Accès : créateur du défi ou `super_admin`.
+- **POST** `/api/challenges/:id/join` - Rejoindre un défi par ID. Accès : utilisateurs authentifiés.
 - **POST** `/api/challenges/:id/invite` - Inviter un utilisateur à un défi. Accès : utilisateurs authentifiés. Body : `email` (string, requis)
 
 ### Invitations aux Défis
