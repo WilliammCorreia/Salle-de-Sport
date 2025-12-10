@@ -1,0 +1,27 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Type d'Exercice</h2>
+  
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div>
+      <label>Nom :</label>
+      <input type="text" formControlName="name" placeholder="Ex: Développé Couché">
+    </div>
+
+    <div>
+      <label>Description :</label>
+      <textarea formControlName="description" rows="3"></textarea>
+    </div>
+
+    <div>
+      <label>Groupes Musculaires (séparés par des virgules) :</label>
+      <input type="text" formControlName="muscleGroupsInput" placeholder="Ex: Pectoraux, Triceps">
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid">Enregistrer</button>
+      <a routerLink="/exercise-types" class="btn-cancel">Annuler</a>
+    </div>
+  </form>
+</div>

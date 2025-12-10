@@ -1,29 +1,40 @@
 <nav>
-  <a routerLink="/" style="font-weight: bold;">Salle de Sport</a>
+  <a routerLink="/" style="font-weight: bold; text-decoration: none; color: #333;">TSPark Sport</a>
   
   @if (authService.isLoggedIn()) {
-    <span> | </span>
-    <a routerLink="/gym-halls">Salles</a>
+    <span class="separator">|</span>
+    <a routerLink="/gym-halls" routerLinkActive="active-link">Salles</a>
+    
+    <span class="separator">|</span>
+    <a routerLink="/challenges" routerLinkActive="active-link">Défis</a>
+
+    <span class="separator">|</span>
+    <a routerLink="/invitations" routerLinkActive="active-link">Invitations</a>
     
     @if (authService.isAdmin()) {
-      <span> | </span>
-      <a routerLink="/users">Utilisateurs</a>
+      <span class="separator">|</span>
+      <a routerLink="/users" routerLinkActive="active-link">Utilisateurs</a>
+      
+      <span class="separator">|</span>
+      <a routerLink="/exercise-types" routerLinkActive="active-link">Types Exos</a>
     }
     
-    <span> | </span>
-    <a routerLink="/profile">Mon Profil</a>
+    <span class="separator">|</span>
+    <a routerLink="/profile" routerLinkActive="active-link">Mon Profil</a>
     
-    <span> | </span>
-    <button (click)="logout()">Déconnexion</button>
+    <span class="separator">|</span>
+    <button (click)="logout()" class="btn-logout">Déconnexion</button>
     
-    <span style="margin-left: 20px;">
-      Connecté: {{ authService.getCurrentUser()?.firstName }} ({{ authService.getCurrentUser()?.role }})
+    <span class="user-info">
+      {{ authService.getCurrentUser()?.firstName }} 
+      <small>({{ authService.getCurrentUser()?.role }})</small>
     </span>
+
   } @else {
-    <span> | </span>
-    <a routerLink="/login">Connexion</a>
-    <span> | </span>
-    <a routerLink="/register">Inscription</a>
+    <span class="separator">|</span>
+    <a routerLink="/login" routerLinkActive="active-link">Connexion</a>
+    <span class="separator">|</span>
+    <a routerLink="/register" routerLinkActive="active-link">Inscription</a>
   }
 </nav>
 <hr>

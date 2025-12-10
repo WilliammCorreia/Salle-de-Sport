@@ -1,0 +1,39 @@
+.exercise-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  background: #f9f9f9;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.grow { flex-grow: 1; }
+.small { width: 80px; }
+.alert-error {
+  background-color: #fee;
+  color: #c00;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+.equipment-section {
+  background: #eef;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.checkbox-item label {
+  font-weight: normal; /* Surcharge le gras des labels parents */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

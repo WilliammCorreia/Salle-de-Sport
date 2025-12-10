@@ -1,5 +1,6 @@
 const User = require('../models/User.model');
 const GymHall = require('../models/GymHall.model');
+const ChallengeInvitation = require('../models/ChallengeInvitation.model');
 const logger = require('../config/logger');
 
 // @desc    Obtenir tous les utilisateurs (avec pagination et filtres)
@@ -356,6 +357,31 @@ exports.getUserStats = async (req, res) => {
       success: false,
       message: 'Erreur lors de la récupération des statistiques',
       error: error.message,
+    });
+  }
+};
+
+// @desc    Voir mes invitations reçues
+// @route   GET /api/users/me/invitations
+exports.getMyInvitations = async (req, res) => {
+  try {
+    const invitations = await ChallengeInvitation.find({ 
+      recipient: req.user.id,
+      status: 'pending'
+    })
+    .populate('sender', 'firstName lastName email')
+    .populate('challenge', 'title difficulty duration');
+
+    res.status(200).json({
+      success: true,
+      data: invitations,
+      message: 'Invitations récupérées avec succès'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: "Erreur lors de la récupération des invitations",
+      error: error.message
     });
   }
 };
