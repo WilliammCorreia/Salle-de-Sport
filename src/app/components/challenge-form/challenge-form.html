@@ -1,0 +1,109 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Défi</h2>
+  
+  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    
+    <div class="section">
+      <h3>Informations Générales</h3>
+      <div class="form-group">
+        <label>Titre</label>
+        <input formControlName="title" type="text" placeholder="Ex: 30 jours Abdos">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" rows="3"></textarea>
+      </div>
+      
+      <div class="row">
+        <div class="form-group">
+          <label>Difficulté</label>
+          <select formControlName="difficulty">
+            <option value="débutant">Débutant</option>
+            <option value="intermédiaire">Intermédiaire</option>
+            <option value="avancé">Avancé</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Catégorie</label>
+          <select formControlName="category">
+            <option value="perte_poids">Perte de poids</option>
+            <option value="prise_masse">Prise de masse</option>
+            <option value="endurance">Endurance</option>
+            <option value="force">Force</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Durée (jours)</label>
+          <input formControlName="duration" type="number">
+        </div>
+      </div>
+
+    <div class="form-group" *ngIf="authService.isGymOwner() && myGymHalls.length > 0">
+        <label>Lier à une salle (Optionnel)</label>
+        <select formControlName="gymHall">
+        <option [ngValue]="null">Aucune (Défi Communautaire)</option>
+        <option *ngFor="let hall of myGymHalls" [value]="hall._id">{{ hall.name }}</option>
+        </select>
+        <small>Note: Si vous liez une salle, nous vérifierons qu'elle possède l'équipement requis.</small>
+    </div>
+
+    <div class="form-group equipment-section" *ngIf="availableEquipment.length > 0">
+        <label>Équipements requis pour ce défi :</label>
+        <div class="checkbox-grid">
+        <div *ngFor="let item of availableEquipment" class="checkbox-item">
+            <label>
+            <input 
+                type="checkbox" 
+                [checked]="isEquipmentSelected(item)"
+                (change)="onEquipmentChange($event, item)"
+            >
+            {{ item }}
+            </label>
+        </div>
+        </div>
+    </div>
+
+    </div>
+
+    <div class="section">
+      <div class="flex-between">
+        <h3>Programme d'Exercices</h3>
+        <button type="button" (click)="addExercise()" class="btn-secondary">+ Ajouter un exo</button>
+      </div>
+
+      <div formArrayName="exercises">
+        <div *ngFor="let control of exercisesControls; let i = index" [formGroupName]="i" class="exercise-row">
+          <div class="form-group grow">
+            <label>Exercice</label>
+            <select formControlName="exerciseType">
+              <option value="" disabled>Choisir...</option>
+              <option *ngFor="let type of exerciseTypes" [value]="type._id">{{ type.name }}</option>
+            </select>
+          </div>
+          <div class="form-group small">
+            <label>Séries</label>
+            <input type="number" formControlName="sets">
+          </div>
+          <div class="form-group small">
+            <label>Reps</label>
+            <input type="number" formControlName="reps">
+          </div>
+          <div class="form-group small">
+            <label>Repos (s)</label>
+            <input type="number" formControlName="restTime">
+          </div>
+          <button type="button" (click)="removeExercise(i)" class="btn-danger-icon" title="Retirer">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="form.invalid" class="btn-primary">Enregistrer le Défi</button>
+      <a routerLink="/challenges" class="btn-cancel">Annuler</a>
+    </div>
+  </form>
+</div>

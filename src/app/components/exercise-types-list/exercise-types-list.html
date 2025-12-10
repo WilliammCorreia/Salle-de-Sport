@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="header">
+    <h2>Types d'Exercices</h2>
+    <button *ngIf="authService.isAdmin()" (click)="createType()">+ Nouveau Type</button>
+  </div>
+
+  <div *ngIf="loading">Chargement...</div>
+
+  <table *ngIf="!loading && (exerciseTypes?.length || 0) > 0">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Muscles</th>
+        <th *ngIf="authService.isAdmin()">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let type of exerciseTypes">
+        <td>{{ type.name }}</td>
+        <td>{{ type.description }}</td>
+        <td>{{ type.muscleGroups.join(', ') }}</td>
+        <td *ngIf="authService.isAdmin()">
+          <button (click)="editType(type._id)">Éditer</button>
+          <button (click)="deleteType(type._id)" class="btn-danger">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && (exerciseTypes?.length || 0) === 0">Aucun type d'exercice trouvé.</p>
+</div>

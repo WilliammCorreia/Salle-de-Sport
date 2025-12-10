@@ -63,3 +63,41 @@ docker-compose exec backend npm run seed
 - **PUT** `/api/gym-halls/:id/approve` - Route pour approuver une salle de sport
 - **PUT** `/api/gym-halls/:id/reject` - Route pour rejeter une salle de sport
 - **PUT** `/api/gym-halls/:id/suspend` - Route pour suspendre une salle de sport
+
+### Types d'Exercices
+- **GET** `/api/exercices-types` - Route pour obtenir la liste de tous les types d'exercices : utilisateur authentifié.
+- **GET** `/api/exercices-types/:id` - Récupérer un type d'exercice par ID. Accès : utilisateur authentifié.
+- **POST** `/api/exercices-types` - Créer un nouveau type d'exercice. Accès : super_admin. Body attendu (JSON) :
+  - name (string, requis)
+  - description (string, requis)
+  - muscleGroups (array de strings, au moins 1 élément)
+- **PUT** `/api/exercices-types/:id` - Mettre à jour un type d'exercice par ID. Accès : super_admin. Même body que pour la création.
+- **DELETE** `/api/exercices-types/:id` - Supprimer un type d'exercice par ID. Accès : super_admin.
+
+### Défis
+- **GET** `/api/challenges` - Récupérer tous les défis. Accès : utilisateurs authentifiés. Query params optionnels :
+  - `difficulty` : `débutant`, `intermédiaire`, `avancé`, `expert`
+  - `minDuration` / `maxDuration` : filtrer par durée
+  - `exercicesTypes` : array d'IDs de types d'exercices
+  - `gymHall` : ID d'une salle de sport
+- **GET** `/api/challenges/:id` - Récupérer un défi par ID. Accès : utilisateurs authentifiés.
+- **POST** `/api/challenges` - Créer un nouveau défi. Accès : utilisateurs authentifiés (protect). Body (JSON) attendu :
+  - title (string, requis)
+  - description (string, requis)
+  - creator (ObjectId string, requis)
+  - category (string, requis) : one of `perte_poids`, `prise_masse`, `endurance`, `force`, `souplesse`, `autre`
+  - duration (int, requis, >= 1)
+  - exercises (array, requis, min 1) — chaque élément :
+    - exerciseType (ObjectId, requis)
+    - sets (int, optionnel)
+    - reps (int, optionnel)
+    - restTime (int, optionnel, secondes)
+  - options : gymHall (ObjectId), equipment (array de strings), difficulty (`débutant`|`intermédiaire`|`avancé`|`expert`), durationUnit (`jours`|`semaines`), participants (array d'ObjectId), isActive (boolean)
+- **PUT** `/api/challenges/:id` - Mettre à jour un défi par ID. Accès : créateur du défi ou `super_admin`. Même body que pour la création.
+- **DELETE** `/api/challenges/:id` - Supprimer un défi par ID. Accès : créateur du défi ou `super_admin`.
+- **POST** `/api/challenges/:id/join` - Rejoindre un défi par ID. Accès : utilisateurs authentifiés.
+- **POST** `/api/challenges/:id/invite` - Inviter un utilisateur à un défi. Accès : utilisateurs authentifiés. Body : `email` (string, requis)
+
+### Invitations aux Défis
+- **GET** `/api/users/me/invitations` - Récupérer mes invitations en attente. Accès : utilisateurs authentifiés.
+- **PUT** `/api/invitations/:id/respond` - Accepter/Refuser une invitation. Accès : destinataire. Body : `status` (`accepted` | `refused`)

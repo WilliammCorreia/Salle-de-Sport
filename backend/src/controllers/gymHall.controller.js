@@ -30,23 +30,110 @@ exports.createGymHall = async (req, res) => {
       });
     }
 
+    // Validations détaillées
+    const errors = [];
+
+    if (!name || name.trim().length === 0) {
+      errors.push({ field: 'name', message: 'Le nom de la salle est requis' });
+    }
+
+    if (!description || description.trim().length === 0) {
+      errors.push({ field: 'description', message: 'La description est requise' });
+    }
+
+    if (!address) {
+      errors.push({ field: 'address', message: "L'adresse est requise" });
+    } else {
+      if (!address.street) {
+        errors.push({ field: 'address.street', message: 'La rue est requise' });
+      }
+      if (!address.city) {
+        errors.push({ field: 'address.city', message: 'La ville est requise' });
+      }
+      if (!address.postalCode) {
+        errors.push({ field: 'address.postalCode', message: 'Le code postal est requis' });
+      }
+    }
+
+    if (!contact) {
+      errors.push({ field: 'contact', message: 'Les informations de contact sont requises' });
+    } else {
+      if (!contact.phone) {
+        errors.push({ field: 'contact.phone', message: 'Le téléphone de contact est requis' });
+      }
+      if (!contact.email) {
+        errors.push({ field: 'contact.email', message: "L'email de contact est requis" });
+      } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(contact.email)) {
+        errors.push({ field: 'contact.email', message: "L'email de contact est invalide" });
+      }
+    }
+
+    if (!capacity || capacity < 1) {
+      errors.push({ field: 'capacity', message: 'La capacité doit être au moins 1' });
+    }
+
+    if (activityTypes && activityTypes.length > 0) {
+      const validActivityTypes = [
+        'musculation',
+        'cardio',
+        'yoga',
+        'pilates',
+        'crossfit',
+        'boxing',
+        'spinning',
+        'danse',
+        'natation',
+        'arts_martiaux',
+        'fitness',
+        'escalade',
+        'autre',
+      ];
+      const invalidTypes = activityTypes.filter((type) => !validActivityTypes.includes(type));
+      if (invalidTypes.length > 0) {
+        errors.push({
+          field: 'activityTypes',
+          message: `Types d'activités invalides: ${invalidTypes.join(', ')}`,
+        });
+      }
+    }
+
+    if (difficultyLevels && difficultyLevels.length > 0) {
+      const validLevels = ['débutant', 'intermédiaire', 'avancé', 'expert'];
+      const invalidLevels = difficultyLevels.filter((level) => !validLevels.includes(level));
+      if (invalidLevels.length > 0) {
+        errors.push({
+          field: 'difficultyLevels',
+          message: `Niveaux de difficulté invalides: ${invalidLevels.join(', ')}`,
+        });
+      }
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Erreurs de validation',
+        errors,
+      });
+    }
+
     // Verifier si une salle avec ce nom existe deja
-    const existingGymHall = await GymHall.findOne({ name });
+    const existingGymHall = await GymHall.findOne({ name: name.trim() });
     if (existingGymHall) {
-      logger.warn('Tentative de création d\'une salle avec nom existant', {
+      logger.warn("Tentative de création d'une salle avec nom existant", {
         userId: req.user.id,
-        name
+        name,
       });
       return res.status(400).json({
         success: false,
         message: 'Une salle avec ce nom existe déjà',
+        errors: [{ field: 'name', message: 'Ce nom est déjà utilisé' }],
       });
     }
 
     // Creer la salle
     const gymHall = await GymHall.create({
-      name,
-      description,
+      name: name.trim(),
+      description: description.trim(),
       owner: req.user.id,
       address,
       contact,
@@ -70,7 +157,7 @@ exports.createGymHall = async (req, res) => {
       ownerId: req.user.id,
       ownerEmail: req.user.email,
       status: gymHall.status,
-      city: address?.city
+      city: address?.city,
     });
 
     res.status(201).json({
@@ -83,8 +170,22 @@ exports.createGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       userId: req.user?.id,
-      hallName: req.body.name
+      hallName: req.body.name,
     });
+
+    // Gestion des erreurs de validation Mongoose
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.keys(error.errors).map((key) => ({
+        field: key,
+        message: error.errors[key].message,
+      }));
+      return res.status(400).json({
+        success: false,
+        message: 'Erreurs de validation',
+        errors: validationErrors,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création de la salle',
@@ -100,14 +201,40 @@ exports.getAllGymHalls = async (req, res) => {
   try {
     const { page = 1, limit = 10, status, city, activityType, search, owner } = req.query;
 
+    // Validation des paramètres de pagination
+    const pageNum = Number.parseInt(page);
+    const limitNum = Number.parseInt(limit);
+
+    if (Number.isNaN(pageNum) || pageNum < 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le paramètre "page" doit être un nombre supérieur à 0',
+      });
+    }
+
+    if (Number.isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le paramètre "limit" doit être un nombre entre 1 et 100',
+      });
+    }
+
     // Construction du filtre
     const filter = {};
 
-    // Si non admin, afficher uniquement les salles approuvees
+    // Si non admin, afficher uniquement les salles approuvees et actives
     if (req.user?.role !== 'super_admin') {
       filter.status = 'approved';
       filter.isActive = true;
     } else if (status) {
+      // Validation du statut
+      const validStatuses = ['pending', 'approved', 'rejected', 'suspended'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: `Le statut doit être l'un des suivants: ${validStatuses.join(', ')}`,
+        });
+      }
       filter.status = status;
     }
 
@@ -116,10 +243,40 @@ exports.getAllGymHalls = async (req, res) => {
     }
 
     if (activityType) {
+      const validActivityTypes = [
+        'musculation',
+        'cardio',
+        'yoga',
+        'pilates',
+        'crossfit',
+        'boxing',
+        'spinning',
+        'danse',
+        'natation',
+        'arts_martiaux',
+        'fitness',
+        'escalade',
+        'autre',
+      ];
+      if (!validActivityTypes.includes(activityType)) {
+        return res.status(400).json({
+          success: false,
+          message: `Le type d'activité doit être l'un des suivants: ${validActivityTypes.join(
+            ', '
+          )}`,
+        });
+      }
       filter.activityTypes = activityType;
     }
 
     if (owner) {
+      // Vérifier si l'ID est valide
+      if (!owner.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({
+          success: false,
+          message: "L'ID du propriétaire est invalide",
+        });
+      }
       filter.owner = owner;
     }
 
@@ -130,15 +287,23 @@ exports.getAllGymHalls = async (req, res) => {
       ];
     }
 
-    const skip = (page - 1) * limit;
+    const skip = (pageNum - 1) * limitNum;
 
     const gymHalls = await GymHall.find(filter)
       .populate('owner', 'firstName lastName email phone')
-      .limit(Number.parseInt(limit))
+      .limit(limitNum)
       .skip(skip)
       .sort({ createdAt: -1 });
 
     const total = await GymHall.countDocuments(filter);
+
+    logger.debug('Récupération des salles de sport', {
+      total,
+      returned: gymHalls.length,
+      page: pageNum,
+      filters: { status: filter.status, city, activityType, search, owner },
+      userRole: req.user?.role || 'anonymous',
+    });
 
     res.status(200).json({
       success: true,
@@ -146,12 +311,17 @@ exports.getAllGymHalls = async (req, res) => {
         gymHalls,
         pagination: {
           total,
-          page: Number.parseInt(page),
-          pages: Math.ceil(total / limit),
+          page: pageNum,
+          pages: Math.ceil(total / limitNum),
+          limit: limitNum,
         },
       },
     });
   } catch (error) {
+    logger.error('Erreur lors de la récupération des salles', {
+      error: error.message,
+      stack: error.stack,
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des salles',
@@ -165,8 +335,19 @@ exports.getAllGymHalls = async (req, res) => {
 // @access  Public
 exports.getGymHallById = async (req, res) => {
   try {
-    const gymHall = await GymHall.findById(req.params.id)
-      .populate('owner', 'firstName lastName email phone');
+    // Validation de l'ID
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        success: false,
+        message: "L'ID de la salle est invalide",
+      });
+    }
+
+    const gymHall = await GymHall.findById(req.params.id).populate(
+      'owner',
+      'firstName lastName email phone'
+    );
+    // .populate('proposedChallenges'); // TODO: Activer quand le modèle Challenge sera créé
 
     if (!gymHall) {
       return res.status(404).json({
@@ -181,17 +362,36 @@ exports.getGymHallById = async (req, res) => {
       req.user?.role !== 'super_admin' &&
       req.user?.id !== gymHall.owner._id.toString()
     ) {
+      logger.warn('Accès refusé à une salle non approuvée', {
+        gymHallId: gymHall._id,
+        status: gymHall.status,
+        userId: req.user?.id,
+        userRole: req.user?.role,
+      });
       return res.status(403).json({
         success: false,
         message: 'Accès non autorisé à cette salle',
       });
     }
 
+    logger.debug('Salle récupérée avec succès', {
+      gymHallId: gymHall._id,
+      name: gymHall.name,
+      status: gymHall.status,
+      userId: req.user?.id,
+    });
+
     res.status(200).json({
       success: true,
       data: { gymHall },
     });
   } catch (error) {
+    logger.error('Erreur lors de la récupération de la salle', {
+      error: error.message,
+      stack: error.stack,
+      gymHallId: req.params.id,
+      userId: req.user?.id,
+    });
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération de la salle',
@@ -321,7 +521,7 @@ exports.approveGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -330,11 +530,11 @@ exports.approveGymHall = async (req, res) => {
       data: { gymHall },
     });
   } catch (error) {
-    logger.error('Erreur lors de l\'approbation de la salle', {
+    logger.error("Erreur lors de l'approbation de la salle", {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
@@ -365,7 +565,7 @@ exports.rejectGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -378,7 +578,7 @@ exports.rejectGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
@@ -410,7 +610,7 @@ exports.suspendGymHall = async (req, res) => {
       adminId: req.user.id,
       gymHallId: gymHall._id,
       gymHallName: gymHall.name,
-      ownerId: gymHall.owner
+      ownerId: gymHall.owner,
     });
 
     res.status(200).json({
@@ -423,7 +623,7 @@ exports.suspendGymHall = async (req, res) => {
       error: error.message,
       stack: error.stack,
       adminId: req.user?.id,
-      gymHallId: req.params.id
+      gymHallId: req.params.id,
     });
     res.status(500).json({
       success: false,
