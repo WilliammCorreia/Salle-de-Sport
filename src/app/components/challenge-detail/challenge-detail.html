@@ -1,0 +1,50 @@
+<div *ngIf="challenge" class="container">
+  <div class="header">
+    <h1>{{ challenge.title }}</h1>
+    <span class="badge">{{ challenge.difficulty }}</span>
+  </div>
+
+  <div class="content-grid">
+    <div class="main-info">
+      <p class="description">{{ challenge.description }}</p>
+      
+      <h3>Programme</h3>
+      <ul class="exercise-list">
+        <li *ngFor="let ex of challenge.exercises">
+          <strong>{{ getExerciseName(ex) }}</strong> : 
+          {{ ex.sets }} séries x {{ ex.reps }} reps (Repos: {{ ex.restTime }}s)
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar">
+        <div class="card info-card">
+            <p><strong>Durée :</strong> {{ challenge.duration }} jours</p>
+            <p><strong>Catégorie :</strong> {{ challenge.category }}</p>
+            <p><strong>Créé par :</strong> {{ getCreatorName(challenge.creator) }}</p>
+            
+            <button 
+                *ngIf="!isParticipant" 
+                (click)="joinChallenge()" 
+                [disabled]="joinLoading"
+                class="btn-primary full-width"
+            >
+                {{ joinLoading ? 'Inscription...' : 'Rejoindre ce défi' }}
+            </button>
+
+            <div *ngIf="isParticipant" class="badge-success full-width">
+                ✅ Vous participez à ce défi
+            </div>
+        </div>
+
+      <div class="card invite-card">
+        <h3>Inviter un ami</h3>
+        <input type="email" [(ngModel)]="inviteEmail" placeholder="Email de l'ami">
+        <button (click)="sendInvitation()" [disabled]="!inviteEmail">Envoyer</button>
+        
+        <p *ngIf="inviteSuccess" class="success-msg">{{ inviteSuccess }}</p>
+        <p *ngIf="inviteError" class="error-msg">{{ inviteError }}</p>
+      </div>
+    </div>
+  </div>
+</div>

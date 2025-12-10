@@ -65,4 +65,9 @@ router.put(
 // @access  Private
 router.get('/:id/stats', protect, userController.getUserStats);
 
+// @route   GET /api/users/me/invitations
+// @desc    Obtenir les invitations de défi d'un utilisateur
+// @access  Private (utilisateur authentifié)
+router.get('/me/invitations', protect, userController.getMyInvitations);
+
 module.exports = router;
