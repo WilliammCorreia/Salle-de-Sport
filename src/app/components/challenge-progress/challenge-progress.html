@@ -1,0 +1,53 @@
+<div>
+  <h1>Ma progression - {{ progress?.challenge?.title }}</h1>
+
+  <div *ngIf="loading">Chargement...</div>
+  <div *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="progress && !loading">
+    <h2>Informations du défi</h2>
+    <p><strong>Description :</strong> {{ progress.challenge.description }}</p>
+    <p><strong>Difficulté :</strong> {{ progress.challenge.difficulty }}</p>
+    <p><strong>Durée :</strong> {{ progress.challenge.duration }} jours</p>
+
+    <h2>Ma progression</h2>
+    <p><strong>Statut :</strong> {{ progress.status }}</p>
+    <p><strong>Progression :</strong> {{ progress.progression }}%</p>
+    <p><strong>Date de début :</strong> {{ progress.startDate ? (progress.startDate | date:'dd/MM/yyyy') : 'Non démarré' }}</p>
+    <p *ngIf="progress.completionDate"><strong>Date de complétion :</strong> {{ progress.completionDate | date:'dd/MM/yyyy' }}</p>
+    <p><strong>Séances enregistrées :</strong> {{ progress.workouts.length }}</p>
+
+    <div *ngIf="progress.status === 'not_started'">
+      <button (click)="startChallenge()" [disabled]="loading">Démarrer ce défi</button>
+    </div>
+
+    <div *ngIf="progress.status === 'in_progress'">
+      <h3>Mettre à jour ma progression</h3>
+      <label for="progressValue">Progression (%) :</label>
+      <input type="range" id="progressValue" min="0" max="100" [(ngModel)]="newProgressValue">
+      <span>{{ newProgressValue }}%</span>
+      <br>
+      <button (click)="updateProgress()" [disabled]="loading">Mettre à jour</button>
+      <br><br>
+      <button (click)="completeChallenge()" [disabled]="loading">Marquer comme terminé</button>
+      <button (click)="abandonChallenge()" [disabled]="loading">Abandonner le défi</button>
+    </div>
+
+    <div *ngIf="progress.status === 'completed'">
+      <p><strong>Félicitations ! Vous avez terminé ce défi !</strong></p>
+    </div>
+
+    <div *ngIf="progress.status === 'abandoned'">
+      <p>Vous avez abandonné ce défi.</p>
+    </div>
+
+    <div *ngIf="progress.notes">
+      <h3>Notes</h3>
+      <p>{{ progress.notes }}</p>
+    </div>
+  </div>
+
+  <br>
+  <button (click)="goBack()">Retour aux défis</button>
+  <a routerLink="/workouts/new">Enregistrer une séance</a>
+</div>

@@ -10,13 +10,22 @@
 
     <span class="separator">|</span>
     <a routerLink="/invitations" routerLinkActive="active-link">Invitations</a>
+
+    <span class="separator">|</span>
+    <a routerLink="/workouts/new" routerLinkActive="active-link">Sessions d'entraînement</a>
     
+    <span class="separator">|</span>
+    <a routerLink="/leaderboard" routerLinkActive="active-link">Classement</a>
+
     @if (authService.isAdmin()) {
       <span class="separator">|</span>
       <a routerLink="/users" routerLinkActive="active-link">Utilisateurs</a>
       
       <span class="separator">|</span>
       <a routerLink="/exercise-types" routerLinkActive="active-link">Types Exos</a>
+
+      <span class="separator">|</span>
+      <a routerLink="/badges" routerLinkActive="active-link">Badges</a>
     }
     
     <span class="separator">|</span>

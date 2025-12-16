@@ -1,0 +1,117 @@
+<div>
+  <h1>Classements</h1>
+
+  <div>
+    <button (click)="setActiveTab('users')" [disabled]="activeTab === 'users'">Top Utilisateurs</button>
+    <button (click)="setActiveTab('gyms')" [disabled]="activeTab === 'gyms'">Top Salles</button>
+    <button (click)="setActiveTab('challenges')" [disabled]="activeTab === 'challenges'">Défis Complétés</button>
+    <button (click)="setActiveTab('badges')" [disabled]="activeTab === 'badges'">Plus de Badges</button>
+  </div>
+
+  <div *ngIf="loading">Chargement...</div>
+  <div *ngIf="error">{{ error }}</div>
+
+  <div *ngIf="!loading && activeTab === 'users'">
+    <h2>Top Utilisateurs par Score</h2>
+    <table border="1" *ngIf="usersLeaderboard.length > 0">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Nom</th>
+          <th>Score</th>
+          <th>Défis Complétés</th>
+          <th>Séances</th>
+          <th>Badges</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of usersLeaderboard">
+          <td>{{ entry.rank }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.score }}</td>
+          <td>{{ entry['completedChallenges'] }}</td>
+          <td>{{ entry['totalWorkouts'] }}</td>
+          <td>{{ entry['badgesCount'] }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="usersLeaderboard.length === 0">Aucun utilisateur dans le classement.</p>
+  </div>
+
+  <div *ngIf="!loading && activeTab === 'gyms'">
+    <h2>Top Salles de Sport</h2>
+    <table border="1" *ngIf="gymsLeaderboard.length > 0">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Nom</th>
+          <th>Ville</th>
+          <th>Propriétaire</th>
+          <th>Défis Proposés</th>
+          <th>Participants</th>
+          <th>Note</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of gymsLeaderboard">
+          <td>{{ entry.rank }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry['city'] }}</td>
+          <td>{{ entry['owner'] }}</td>
+          <td>{{ entry['challengesCount'] }}</td>
+          <td>{{ entry['totalParticipants'] }}</td>
+          <td>{{ entry['rating'] }}</td>
+          <td>{{ entry.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="gymsLeaderboard.length === 0">Aucune salle dans le classement.</p>
+  </div>
+
+  <div *ngIf="!loading && activeTab === 'challenges'">
+    <h2>Top Utilisateurs par Défis Complétés</h2>
+    <table border="1" *ngIf="challengesLeaderboard.length > 0">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Nom</th>
+          <th>Défis Complétés</th>
+          <th>Score Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of challengesLeaderboard">
+          <td>{{ entry.rank }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry['completedChallenges'] }}</td>
+          <td>{{ entry.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="challengesLeaderboard.length === 0">Aucun utilisateur dans le classement.</p>
+  </div>
+
+  <div *ngIf="!loading && activeTab === 'badges'">
+    <h2>Top Utilisateurs par Nombre de Badges</h2>
+    <table border="1" *ngIf="badgesLeaderboard.length > 0">
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Nom</th>
+          <th>Nombre de Badges</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let entry of badgesLeaderboard">
+          <td>{{ entry.rank }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry['badgesCount'] }}</td>
+          <td>{{ entry.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="badgesLeaderboard.length === 0">Aucun utilisateur dans le classement.</p>
+  </div>
+</div>
