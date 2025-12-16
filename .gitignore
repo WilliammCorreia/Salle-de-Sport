@@ -51,3 +51,4 @@ backend/.env
 backend/.env.local
 backend/.env.production
 backend/.env.test
+src/assets/env.js

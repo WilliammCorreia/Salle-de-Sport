@@ -4,7 +4,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Argument pour l'URL de l'API
-ARG API_URL=http://localhost:5000/api
+ARG API_URL=http://109.221.224.84:5000/api
 
 # Copier les fichiers package
 COPY package*.json ./
