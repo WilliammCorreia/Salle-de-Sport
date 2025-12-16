@@ -1,0 +1,97 @@
+<div>
+  <h1>Enregistrer une séance d'entraînement</h1>
+
+  <div *ngIf="error">{{ error }}</div>
+
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="date">Date de la séance *</label>
+      <input type="date" id="date" name="date" [(ngModel)]="workout.date" required>
+    </div>
+
+    <div>
+      <label for="duration">Durée (minutes) *</label>
+      <input type="number" id="duration" name="duration" [(ngModel)]="workout.duration" required min="1">
+    </div>
+
+    <div>
+      <label for="calories">Calories brûlées</label>
+      <input type="number" id="calories" name="calories" [(ngModel)]="workout.calories" min="0">
+    </div>
+
+    <div>
+      <label for="challenge">Défi associé (optionnel)</label>
+      <select id="challenge" name="challenge" [(ngModel)]="workout.challenge">
+        <option [value]="null">Aucun</option>
+        <option *ngFor="let challenge of challenges" [value]="challenge._id">
+          {{ challenge.title }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label for="intensity">Intensité</label>
+      <select id="intensity" name="intensity" [(ngModel)]="workout.intensity">
+        <option *ngFor="let int of intensities" [value]="int">{{ int }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="mood">Humeur</label>
+      <select id="mood" name="mood" [(ngModel)]="workout.mood">
+        <option *ngFor="let m of moods" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+
+    <div>
+      <h3>Exercices réalisés</h3>
+      <button type="button" (click)="addExercise()">Ajouter un exercice</button>
+
+      <div *ngFor="let exercise of workout.exercises; let i = index" style="border: 1px solid black; padding: 10px; margin: 10px 0;">
+        <h4>Exercice {{ i + 1 }}</h4>
+
+        <div>
+          <label [for]="'exerciseType' + i">Type d'exercice *</label>
+          <select [id]="'exerciseType' + i" [name]="'exerciseType' + i" [(ngModel)]="exercise.exerciseType" required>
+            <option value="">-- Sélectionner --</option>
+            <option *ngFor="let type of exerciseTypes" [value]="type._id">
+              {{ type.name }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label [for]="'sets' + i">Séries</label>
+          <input type="number" [id]="'sets' + i" [name]="'sets' + i" [(ngModel)]="exercise.sets" min="1">
+        </div>
+
+        <div>
+          <label [for]="'reps' + i">Répétitions</label>
+          <input type="number" [id]="'reps' + i" [name]="'reps' + i" [(ngModel)]="exercise.reps" min="1">
+        </div>
+
+        <div>
+          <label [for]="'weight' + i">Poids (kg)</label>
+          <input type="number" [id]="'weight' + i" [name]="'weight' + i" [(ngModel)]="exercise.weight" min="0">
+        </div>
+
+        <div>
+          <label [for]="'exNotes' + i">Notes</label>
+          <input type="text" [id]="'exNotes' + i" [name]="'exNotes' + i" [(ngModel)]="exercise.notes">
+        </div>
+
+        <button type="button" (click)="removeExercise(i)">Retirer cet exercice</button>
+      </div>
+    </div>
+
+    <div>
+      <label for="notes">Notes générales</label>
+      <textarea id="notes" name="notes" [(ngModel)]="workout.notes" rows="3"></textarea>
+    </div>
+
+    <div>
+      <button type="submit" [disabled]="loading">{{ loading ? 'Enregistrement...' : 'Enregistrer la séance' }}</button>
+      <button type="button" (click)="cancel()">Annuler</button>
+    </div>
+  </form>
+</div>

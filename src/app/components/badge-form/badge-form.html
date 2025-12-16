@@ -1,0 +1,71 @@
+<div>
+  <h1>{{ isEditMode ? 'Modifier le badge' : 'Créer un badge' }}</h1>
+
+  <div *ngIf="loading">Chargement...</div>
+  <div *ngIf="error">{{ error }}</div>
+
+  <form (ngSubmit)="onSubmit()" *ngIf="!loading">
+    <div>
+      <label for="name">Nom du badge *</label>
+      <input type="text" id="name" name="name" [(ngModel)]="badge.name" required>
+    </div>
+
+    <div>
+      <label for="description">Description *</label>
+      <textarea id="description" name="description" [(ngModel)]="badge.description" required rows="3"></textarea>
+    </div>
+
+    <div>
+      <label for="icon">Icône</label>
+      <input type="text" id="icon" name="icon" [(ngModel)]="badge.icon">
+    </div>
+
+    <div>
+      <label for="category">Catégorie</label>
+      <select id="category" name="category" [(ngModel)]="badge.category">
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="rarity">Rareté</label>
+      <select id="rarity" name="rarity" [(ngModel)]="badge.rarity">
+        <option *ngFor="let rar of rarities" [value]="rar">{{ rar }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="ruleType">Type de règle *</label>
+      <select id="ruleType" name="ruleType" [(ngModel)]="badge.rules!.type" required>
+        <option *ngFor="let type of ruleTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="badge.rules!.type !== 'custom'">
+      <label for="ruleValue">Valeur requise *</label>
+      <input type="number" id="ruleValue" name="ruleValue" [(ngModel)]="badge.rules!.value" required min="1">
+    </div>
+
+    <div *ngIf="badge.rules!.type === 'custom'">
+      <label for="customCondition">Condition personnalisée</label>
+      <textarea id="customCondition" name="customCondition" [(ngModel)]="badge.rules!.customCondition" rows="2"></textarea>
+    </div>
+
+    <div>
+      <label for="scoreBonus">Bonus de score</label>
+      <input type="number" id="scoreBonus" name="scoreBonus" [(ngModel)]="badge.scoreBonus" min="0">
+    </div>
+
+    <div>
+      <label for="isActive">
+        <input type="checkbox" id="isActive" name="isActive" [(ngModel)]="badge.isActive">
+        Badge actif
+      </label>
+    </div>
+
+    <div>
+      <button type="submit" [disabled]="loading">{{ isEditMode ? 'Mettre à jour' : 'Créer' }}</button>
+      <button type="button" (click)="cancel()">Annuler</button>
+    </div>
+  </form>
+</div>
