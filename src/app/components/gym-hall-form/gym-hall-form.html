@@ -1,139 +1,261 @@
-<div>
-  <h1>{{ isEditMode ? 'Modifier' : 'Créer' }} une salle de sport</h1>
+<div class="container py-4">
+  <h1 class="mb-4">{{ isEditMode ? 'Modifier' : 'Créer' }} une salle de sport</h1>
 
-  <div *ngIf="errorMessage">
-    <p>{{ errorMessage }}</p>
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
   </div>
 
-  <form [formGroup]="gymHallForm" (ngSubmit)="onSubmit()">
-    <h2>Informations générales</h2>
+  <form [formGroup]="gymHallForm" (ngSubmit)="onSubmit()" class="needs-validation" novalidate>
     
-    <div>
-      <label for="name">Nom:</label>
-      <input id="name" type="text" formControlName="name" required />
-    </div>
-
-    <div>
-      <label for="description">Description:</label>
-      <textarea id="description" formControlName="description" rows="4" required></textarea>
-    </div>
-
-    <div>
-      <label for="capacity">Capacité:</label>
-      <input id="capacity" type="number" formControlName="capacity" />
-    </div>
-
-    <h2>Adresse</h2>
-    <div formGroupName="address">
-      <div>
-        <label for="street">Rue:</label>
-        <input id="street" type="text" formControlName="street" required />
+    <!-- Section 1: Informations générales -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">Informations générales</h2>
       </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12 mb-3">
+            <label for="name" class="form-label">Nom de la salle *</label>
+            <input id="name" type="text" class="form-control" formControlName="name" required />
+            <div class="invalid-feedback">
+              Veuillez saisir le nom de la salle.
+            </div>
+          </div>
 
-      <div>
-        <label for="city">Ville:</label>
-        <input id="city" type="text" formControlName="city" required />
-      </div>
+          <div class="col-md-12 mb-3">
+            <label for="description" class="form-label">Description *</label>
+            <textarea id="description" class="form-control" formControlName="description" rows="4" required></textarea>
+            <div class="invalid-feedback">
+              Veuillez saisir une description.
+            </div>
+          </div>
 
-      <div>
-        <label for="postalCode">Code postal:</label>
-        <input id="postalCode" type="text" formControlName="postalCode" required />
-      </div>
-
-      <div>
-        <label for="country">Pays:</label>
-        <input id="country" type="text" formControlName="country" required />
+          <div class="col-md-6 mb-3">
+            <label for="capacity" class="form-label">Capacité (personnes)</label>
+            <input id="capacity" type="number" class="form-control" formControlName="capacity" min="1" />
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2>Contact</h2>
-    <div formGroupName="contact">
-      <div>
-        <label for="phone">Téléphone:</label>
-        <input id="phone" type="tel" formControlName="phone" required />
+    <!-- Section 2: Adresse -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">Adresse</h2>
       </div>
+      <div class="card-body" formGroupName="address">
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label for="street" class="form-label">Rue *</label>
+            <input id="street" type="text" class="form-control" formControlName="street" required />
+          </div>
 
-      <div>
-        <label for="email">Email:</label>
-        <input id="email" type="email" formControlName="email" required />
-      </div>
+          <div class="col-md-4 mb-3">
+            <label for="postalCode" class="form-label">Code postal *</label>
+            <input id="postalCode" type="text" class="form-control" formControlName="postalCode" required />
+          </div>
 
-      <div>
-        <label for="website">Site web:</label>
-        <input id="website" type="url" formControlName="website" />
-      </div>
-    </div>
+          <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">Ville *</label>
+            <input id="city" type="text" class="form-control" formControlName="city" required />
+          </div>
 
-    <h2>Types d'activités</h2>
-    <div>
-      <div *ngFor="let type of activityTypes">
-        <label>
-          <input 
-            type="checkbox" 
-            [checked]="isActivityTypeSelected(type)"
-            (change)="onActivityTypeChange($event, type)"
-          />
-          {{ type }}
-        </label>
+          <div class="col-md-6 mb-3">
+            <label for="country" class="form-label">Pays *</label>
+            <input id="country" type="text" class="form-control" formControlName="country" value="France" required />
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2>Équipements</h2>
-    <div formArrayName="equipment">
-      <div *ngFor="let eq of equipment.controls; let i = index" [formGroupName]="i">
-        <input type="text" formControlName="name" placeholder="Nom de l'équipement" />
-        <input type="number" formControlName="quantity" placeholder="Quantité" />
-        <button type="button" (click)="removeEquipment(i)">Supprimer</button>
+    <!-- Section 3: Contact -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">Contact</h2>
       </div>
-    </div>
-    <button type="button" (click)="addEquipment()">Ajouter un équipement</button>
+      <div class="card-body" formGroupName="contact">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="phone" class="form-label">Téléphone *</label>
+            <div class="input-group">
+              <span class="input-group-text">+33</span>
+              <input id="phone" type="tel" class="form-control" formControlName="phone" required />
+            </div>
+          </div>
 
-    <h2>Services</h2>
-    <div formArrayName="facilities">
-      <div *ngFor="let facility of facilities.controls; let i = index">
-        <input type="text" [formControlName]="i" placeholder="Service" />
-        <button type="button" (click)="removeFacility(i)">Supprimer</button>
-      </div>
-    </div>
-    <button type="button" (click)="addFacility()">Ajouter un service</button>
+          <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email *</label>
+            <input id="email" type="email" class="form-control" formControlName="email" required />
+          </div>
 
-    <h2>Tarifs</h2>
-    <div formGroupName="pricing">
-      <div>
-        <label for="monthly">Mensuel (€):</label>
-        <input id="monthly" type="number" formControlName="monthly" />
-      </div>
-
-      <div>
-        <label for="quarterly">Trimestriel (€):</label>
-        <input id="quarterly" type="number" formControlName="quarterly" />
-      </div>
-
-      <div>
-        <label for="yearly">Annuel (€):</label>
-        <input id="yearly" type="number" formControlName="yearly" />
-      </div>
-
-      <div>
-        <label for="dayPass">Pass journée (€):</label>
-        <input id="dayPass" type="number" formControlName="dayPass" />
+          <div class="col-md-12 mb-3">
+            <label for="website" class="form-label">Site web</label>
+            <div class="input-group">
+              <span class="input-group-text">https://</span>
+              <input id="website" type="url" class="form-control" formControlName="website" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <h2>Images (URLs)</h2>
-    <div formArrayName="images">
-      <div *ngFor="let img of images.controls; let i = index">
-        <input type="url" [formControlName]="i" placeholder="URL de l'image" />
-        <button type="button" (click)="removeImage(i)">Supprimer</button>
+    <!-- Section 4: Types d'activités -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">Types d'activités</h2>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6" *ngFor="let type of activityTypes">
+            <div class="form-check mb-2">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                [id]="'activity-' + type"
+                [checked]="isActivityTypeSelected(type)"
+                (change)="onActivityTypeChange($event, type)"
+              />
+              <label class="form-check-label" [for]="'activity-' + type">
+                {{ type }}
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <button type="button" (click)="addImage()">Ajouter une image</button>
 
-    <div>
-      <button type="submit" [disabled]="!gymHallForm.valid">
-        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+    <!-- Section 5: Équipements -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Équipements</h2>
+        <button type="button" class="btn btn-sm btn-light" (click)="addEquipment()">
+          <i class="fas fa-plus me-1"></i> Ajouter
+        </button>
+      </div>
+      <div class="card-body" formArrayName="equipment">
+        <div *ngFor="let eq of equipment.controls; let i = index" [formGroupName]="i" class="row mb-3 align-items-end">
+          <div class="col-md-6 mb-2">
+            <input type="text" class="form-control" formControlName="name" placeholder="Nom de l'équipement" />
+          </div>
+          <div class="col-md-4 mb-2">
+            <input type="number" class="form-control" formControlName="quantity" placeholder="Quantité" min="1" />
+          </div>
+          <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-outline-danger w-100" (click)="removeEquipment(i)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="equipment.controls.length === 0" class="text-muted text-center py-3">
+          Aucun équipement ajouté
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Services -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Services</h2>
+        <button type="button" class="btn btn-sm btn-light" (click)="addFacility()">
+          <i class="fas fa-plus me-1"></i> Ajouter
+        </button>
+      </div>
+      <div class="card-body" formArrayName="facilities">
+        <div *ngFor="let facility of facilities.controls; let i = index" class="row mb-2 align-items-center">
+          <div class="col-md-10 mb-2">
+            <input type="text" class="form-control" [formControlName]="i" placeholder="Ex: Douches, Parking, Vestiaires..." />
+          </div>
+          <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-outline-danger w-100" (click)="removeFacility(i)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="facilities.controls.length === 0" class="text-muted text-center py-3">
+          Aucun service ajouté
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7: Tarifs -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h2 class="h5 mb-0">Tarifs (€)</h2>
+      </div>
+      <div class="card-body" formGroupName="pricing">
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="monthly" class="form-label">Mensuel</label>
+            <div class="input-group">
+              <input id="monthly" type="number" class="form-control" formControlName="monthly" min="0" step="0.01" />
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="quarterly" class="form-label">Trimestriel</label>
+            <div class="input-group">
+              <input id="quarterly" type="number" class="form-control" formControlName="quarterly" min="0" step="0.01" />
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="yearly" class="form-label">Annuel</label>
+            <div class="input-group">
+              <input id="yearly" type="number" class="form-control" formControlName="yearly" min="0" step="0.01" />
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+
+          <div class="col-md-3 mb-3">
+            <label for="dayPass" class="form-label">Pass journée</label>
+            <div class="input-group">
+              <input id="dayPass" type="number" class="form-control" formControlName="dayPass" min="0" step="0.01" />
+              <span class="input-group-text">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 8: Images -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Images (URLs)</h2>
+        <button type="button" class="btn btn-sm btn-light" (click)="addImage()">
+          <i class="fas fa-plus me-1"></i> Ajouter
+        </button>
+      </div>
+      <div class="card-body" formArrayName="images">
+        <div *ngFor="let img of images.controls; let i = index" class="row mb-2 align-items-center">
+          <div class="col-md-10 mb-2">
+            <input type="url" class="form-control" [formControlName]="i" placeholder="https://exemple.com/image.jpg" />
+          </div>
+          <div class="col-md-2 mb-2">
+            <button type="button" class="btn btn-outline-danger w-100" (click)="removeImage(i)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="images.controls.length === 0" class="text-muted text-center py-3">
+          Aucune image ajoutée
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="d-flex justify-content-between mt-4">
+      <a routerLink="/gym-halls" class="btn btn-outline-secondary">
+        <i class="fas fa-times me-1"></i> Annuler
+      </a>
+      
+      <button type="submit" class="btn btn-primary" [disabled]="!gymHallForm.valid">
+        <i class="fas" [ngClass]="isEditMode ? 'fa-save' : 'fa-plus'"></i>
+        {{ isEditMode ? ' Mettre à jour' : ' Créer la salle' }}
       </button>
-      <a routerLink="/gym-halls">Annuler</a>
     </div>
   </form>
 </div>
