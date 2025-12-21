@@ -13,6 +13,11 @@ import { ChallengesList } from './components/challenges-list/challenges-list';
 import { ChallengeForm } from './components/challenge-form/challenge-form';
 import { ChallengeDetail } from './components/challenge-detail/challenge-detail';
 import { InvitationsList } from './components/invitations-list/invitations-list';
+import { BadgesListComponent } from './components/badges-list/badges-list';
+import { BadgeFormComponent } from './components/badge-form/badge-form';
+import { WorkoutFormComponent } from './components/workout-form/workout-form';
+import { ChallengeProgressComponent } from './components/challenge-progress/challenge-progress';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/gym-halls', pathMatch: 'full' },
@@ -37,6 +42,20 @@ export const routes: Routes = [
 
   // Invitations
   { path: 'invitations', component: InvitationsList, canActivate: [authGuard] },
+
+  // Badges (Admin)
+  { path: 'badges', component: BadgesListComponent, canActivate: [adminGuard] },
+  { path: 'badges/new', component: BadgeFormComponent, canActivate: [adminGuard] },
+  { path: 'badges/edit/:id', component: BadgeFormComponent, canActivate: [adminGuard] },
+
+  // Workouts (Séances d'entraînement)
+  { path: 'workouts/new', component: WorkoutFormComponent, canActivate: [authGuard] },
+
+  // Progression des défis
+  { path: 'challenges/:id/progress', component: ChallengeProgressComponent, canActivate: [authGuard] },
+
+  // Classements
+  { path: 'leaderboard', component: LeaderboardComponent },
 
   { path: '**', redirectTo: '/gym-halls' },
 ];

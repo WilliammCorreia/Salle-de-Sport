@@ -1,78 +1,94 @@
-<div>
-  <h1>Gestion des utilisateurs</h1>
+<div class="container py-4">
+  <h1 class="mb-4">Gestion des utilisateurs</h1>
 
-  <div *ngIf="errorMessage">
-    <p>{{ errorMessage }}</p>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
 
-  <div *ngIf="successMessage">
-    <p>{{ successMessage }}</p>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
   </div>
 
-  <div>
-    <h2>Filtres</h2>
-
-    <div>
-      <label for="search">Rechercher:</label>
-      <input
-        id="search"
-        type="text"
-        [formControl]="searchTerm"
-        placeholder="Email, prénom, nom..."
-      />
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Filtres</h2>
     </div>
-
-    <div>
-      <label for="roleFilter">Rôle:</label>
-      <select id="roleFilter" [formControl]="roleFilter">
-        <option value="">Tous</option>
-        <option value="client">Client</option>
-        <option value="gym_owner">Propriétaire</option>
-        <option value="super_admin">Admin</option>
-      </select>
-    </div>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th>Nom</th>
-        <th>Prénom</th>
-        <th>Rôle</th>
-        <th>Statut</th>
-        <th>Créé le</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of filteredUsers">
-        <td>{{ user.email }}</td>
-        <td>{{ user.lastName || '-' }}</td>
-        <td>{{ user.firstName || '-' }}</td>
-        <td>
-          <select
-            [value]="user.role"
-            (change)="changeUserRole(user._id, $any($event.target).value)"
-          >
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Rechercher:</label>
+          <input
+            type="text"
+            class="form-control"
+            [formControl]="searchTerm"
+            placeholder="Email, prénom, nom..."
+          />
+        </div>
+        
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Rôle:</label>
+          <select class="form-select" [formControl]="roleFilter">
+            <option value="">Tous</option>
             <option value="client">Client</option>
             <option value="gym_owner">Propriétaire</option>
             <option value="super_admin">Admin</option>
           </select>
-        </td>
-        <td>{{ user.isActive ? 'Actif' : 'Inactif' }}</td>
-        <td>{{ user.createdAt | date : 'dd/MM/yyyy' }}</td>
-        <td>
-          <button (click)="toggleUserStatus(user._id, user.isActive)">
-            {{ user.isActive ? 'Désactiver' : 'Activer' }}
-          </button>
-          <button (click)="deleteUser(user._id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div *ngIf="filteredUsers.length === 0">
-    <p>Aucun utilisateur trouvé.</p>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-light">
+        <tr>
+          <th>Email</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Rôle</th>
+          <th>Statut</th>
+          <th>Créé le</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.email }}</td>
+          <td>{{ user.lastName || '-' }}</td>
+          <td>{{ user.firstName || '-' }}</td>
+          <td>
+            <select
+              class="form-select form-select-sm"
+              [value]="user.role"
+              (change)="changeUserRole(user._id, $any($event.target).value)"
+            >
+              <option value="client">Client</option>
+              <option value="gym_owner">Propriétaire</option>
+              <option value="super_admin">Admin</option>
+            </select>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="user.isActive ? 'bg-success' : 'bg-secondary'">
+              {{ user.isActive ? 'Actif' : 'Inactif' }}
+            </span>
+          </td>
+          <td>{{ user.createdAt | date : 'dd/MM/yyyy' }}</td>
+          <td>
+            <button class="btn btn-outline-warning btn-sm me-1" 
+                    (click)="toggleUserStatus(user._id, user.isActive)">
+              {{ user.isActive ? 'Désactiver' : 'Activer' }}
+            </button>
+            <button class="btn btn-outline-danger btn-sm" 
+                    (click)="deleteUser(user._id)">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="filteredUsers.length === 0" class="alert alert-warning">
+    Aucun utilisateur trouvé.
   </div>
 </div>

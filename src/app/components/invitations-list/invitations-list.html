@@ -1,22 +1,28 @@
-<div class="container">
-  <h2>Invitations reçues</h2>
+<div class="container py-4">
+  <h2 class="mb-4">Invitations reçues</h2>
 
-  <div *ngIf="loading">Chargement...</div>
+  <div *ngIf="loading" class="alert alert-info">Chargement...</div>
 
   <div *ngIf="!loading && invitations.length === 0">
-    <p>Vous n'avez aucune invitation en attente.</p>
+    <div class="alert alert-info">
+      Vous n'avez aucune invitation en attente.
+    </div>
   </div>
 
-  <div class="invitation-list">
-    <div *ngFor="let invite of invitations" class="invite-card">
-      <div class="invite-info">
-        <p><strong>{{ invite.sender.firstName }} {{ invite.sender.lastName }}</strong> vous invite à rejoindre :</p>
-        <h4>{{ invite.challenge.title }}</h4>
-        <span class="badge">{{ invite.challenge.difficulty }}</span>
-      </div>
-      <div class="invite-actions">
-        <button (click)="respond(invite._id, 'accepted')" class="btn-accept">Accepter</button>
-        <button (click)="respond(invite._id, 'rejected')" class="btn-reject">Refuser</button>
+  <div *ngIf="!loading && invitations.length > 0" class="row">
+    <div *ngFor="let invite of invitations" class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-3">
+            <p><strong>{{ invite.sender.firstName }} {{ invite.sender.lastName }}</strong> vous invite à rejoindre :</p>
+            <h5 class="card-title">{{ invite.challenge.title }}</h5>
+            <span class="badge">{{ invite.challenge.difficulty }}</span>
+          </div>
+          <div class="d-flex gap-2">
+            <button (click)="respond(invite._id, 'accepted')" class="btn btn-success">Accepter</button>
+            <button (click)="respond(invite._id, 'rejected')" class="btn btn-outline-danger">Refuser</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

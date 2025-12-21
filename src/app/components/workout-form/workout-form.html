@@ -1,97 +1,118 @@
-<div>
-  <h1>Enregistrer une séance d'entraînement</h1>
+<div class="container py-4">
+  <h1 class="mb-4">Enregistrer une séance d'entraînement</h1>
 
-  <div *ngIf="error">{{ error }}</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
   <form (ngSubmit)="onSubmit()">
-    <div>
-      <label for="date">Date de la séance *</label>
-      <input type="date" id="date" name="date" [(ngModel)]="workout.date" required>
-    </div>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="h5 mb-0">Informations de la séance</h3>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="date" class="form-label">Date de la séance *</label>
+            <input type="date" class="form-control" id="date" name="date" [(ngModel)]="workout.date" required>
+          </div>
 
-    <div>
-      <label for="duration">Durée (minutes) *</label>
-      <input type="number" id="duration" name="duration" [(ngModel)]="workout.duration" required min="1">
-    </div>
+          <div class="col-md-4 mb-3">
+            <label for="duration" class="form-label">Durée (minutes) *</label>
+            <input type="number" class="form-control" id="duration" name="duration" [(ngModel)]="workout.duration" required min="1">
+          </div>
 
-    <div>
-      <label for="calories">Calories brûlées</label>
-      <input type="number" id="calories" name="calories" [(ngModel)]="workout.calories" min="0">
-    </div>
-
-    <div>
-      <label for="challenge">Défi associé (optionnel)</label>
-      <select id="challenge" name="challenge" [(ngModel)]="workout.challenge">
-        <option [value]="null">Aucun</option>
-        <option *ngFor="let challenge of challenges" [value]="challenge._id">
-          {{ challenge.title }}
-        </option>
-      </select>
-    </div>
-
-    <div>
-      <label for="intensity">Intensité</label>
-      <select id="intensity" name="intensity" [(ngModel)]="workout.intensity">
-        <option *ngFor="let int of intensities" [value]="int">{{ int }}</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="mood">Humeur</label>
-      <select id="mood" name="mood" [(ngModel)]="workout.mood">
-        <option *ngFor="let m of moods" [value]="m">{{ m }}</option>
-      </select>
-    </div>
-
-    <div>
-      <h3>Exercices réalisés</h3>
-      <button type="button" (click)="addExercise()">Ajouter un exercice</button>
-
-      <div *ngFor="let exercise of workout.exercises; let i = index" style="border: 1px solid black; padding: 10px; margin: 10px 0;">
-        <h4>Exercice {{ i + 1 }}</h4>
-
-        <div>
-          <label [for]="'exerciseType' + i">Type d'exercice *</label>
-          <select [id]="'exerciseType' + i" [name]="'exerciseType' + i" [(ngModel)]="exercise.exerciseType" required>
-            <option value="">-- Sélectionner --</option>
-            <option *ngFor="let type of exerciseTypes" [value]="type._id">
-              {{ type.name }}
-            </option>
-          </select>
+          <div class="col-md-4 mb-3">
+            <label for="calories" class="form-label">Calories brûlées</label>
+            <input type="number" class="form-control" id="calories" name="calories" [(ngModel)]="workout.calories" min="0">
+          </div>
         </div>
 
-        <div>
-          <label [for]="'sets' + i">Séries</label>
-          <input type="number" [id]="'sets' + i" [name]="'sets' + i" [(ngModel)]="exercise.sets" min="1">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="challenge" class="form-label">Défi associé (optionnel)</label>
+            <select class="form-select" id="challenge" name="challenge" [(ngModel)]="workout.challenge">
+              <option [value]="null">Aucun</option>
+              <option *ngFor="let challenge of challenges" [value]="challenge._id">
+                {{ challenge.title }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="intensity" class="form-label">Intensité</label>
+            <select class="form-select" id="intensity" name="intensity" [(ngModel)]="workout.intensity">
+              <option *ngFor="let int of intensities" [value]="int">{{ int }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label for="mood" class="form-label">Humeur</label>
+            <select class="form-select" id="mood" name="mood" [(ngModel)]="workout.mood">
+              <option *ngFor="let m of moods" [value]="m">{{ m }}</option>
+            </select>
+          </div>
         </div>
 
-        <div>
-          <label [for]="'reps' + i">Répétitions</label>
-          <input type="number" [id]="'reps' + i" [name]="'reps' + i" [(ngModel)]="exercise.reps" min="1">
+        <div class="mb-3">
+          <label for="notes" class="form-label">Notes générales</label>
+          <textarea class="form-control" id="notes" name="notes" [(ngModel)]="workout.notes" rows="3"></textarea>
         </div>
-
-        <div>
-          <label [for]="'weight' + i">Poids (kg)</label>
-          <input type="number" [id]="'weight' + i" [name]="'weight' + i" [(ngModel)]="exercise.weight" min="0">
-        </div>
-
-        <div>
-          <label [for]="'exNotes' + i">Notes</label>
-          <input type="text" [id]="'exNotes' + i" [name]="'exNotes' + i" [(ngModel)]="exercise.notes">
-        </div>
-
-        <button type="button" (click)="removeExercise(i)">Retirer cet exercice</button>
       </div>
     </div>
 
-    <div>
-      <label for="notes">Notes générales</label>
-      <textarea id="notes" name="notes" [(ngModel)]="workout.notes" rows="3"></textarea>
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="h5 mb-0">Exercices réalisés</h3>
+        <button type="button" class="btn btn-secondary btn-sm" (click)="addExercise()">Ajouter un exercice</button>
+      </div>
+      <div class="card-body">
+        <div *ngFor="let exercise of workout.exercises; let i = index" class="card mb-3">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="h6 mb-0">Exercice {{ i + 1 }}</h4>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeExercise(i)">Retirer</button>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label [for]="'exerciseType' + i" class="form-label">Type d'exercice *</label>
+                <select class="form-select" [id]="'exerciseType' + i" [name]="'exerciseType' + i" [(ngModel)]="exercise.exerciseType" required>
+                  <option value="">-- Sélectionner --</option>
+                  <option *ngFor="let type of exerciseTypes" [value]="type._id">
+                    {{ type.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-md-2 mb-3">
+                <label [for]="'sets' + i" class="form-label">Séries</label>
+                <input type="number" class="form-control" [id]="'sets' + i" [name]="'sets' + i" [(ngModel)]="exercise.sets" min="1">
+              </div>
+
+              <div class="col-md-2 mb-3">
+                <label [for]="'reps' + i" class="form-label">Répétitions</label>
+                <input type="number" class="form-control" [id]="'reps' + i" [name]="'reps' + i" [(ngModel)]="exercise.reps" min="1">
+              </div>
+
+              <div class="col-md-2 mb-3">
+                <label [for]="'weight' + i" class="form-label">Poids (kg)</label>
+                <input type="number" class="form-control" [id]="'weight' + i" [name]="'weight' + i" [(ngModel)]="exercise.weight" min="0">
+              </div>
+            </div>
+
+            <div>
+              <label [for]="'exNotes' + i" class="form-label">Notes</label>
+              <input type="text" class="form-control" [id]="'exNotes' + i" [name]="'exNotes' + i" [(ngModel)]="exercise.notes">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div>
-      <button type="submit" [disabled]="loading">{{ loading ? 'Enregistrement...' : 'Enregistrer la séance' }}</button>
-      <button type="button" (click)="cancel()">Annuler</button>
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        {{ loading ? 'Enregistrement...' : 'Enregistrer la séance' }}
+      </button>
     </div>
   </form>
 </div>

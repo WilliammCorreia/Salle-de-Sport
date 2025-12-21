@@ -1,78 +1,108 @@
-<div class="container">
-  <div class="header">
-    <h1>Explorer les Défis</h1>
-    <a routerLink="/challenges/new" class="btn-primary">Créer un Défi</a>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Explorer les Défis</h1>
+    <a routerLink="/challenges/new" class="btn btn-primary">Créer un Défi</a>
   </div>
 
-  <div class="filters">
-    
-    <div class="filter-group">
-      <label>Difficulté</label>
-      <select [(ngModel)]="selectedDifficulty" (change)="loadChallenges()">
-        <option value="">Toutes</option>
-        <option value="débutant">Débutant</option>
-        <option value="intermédiaire">Intermédiaire</option>
-        <option value="avancé">Avancé</option>
-        <option value="expert">Expert</option>
-      </select>
-    </div>
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row align-items-end">
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Difficulté</label>
+          <select class="form-select" [(ngModel)]="selectedDifficulty" (change)="loadChallenges()">
+            <option value="">Toutes</option>
+            <option value="débutant">Débutant</option>
+            <option value="intermédiaire">Intermédiaire</option>
+            <option value="avancé">Avancé</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
 
-    <div class="filter-group">
-      <label>Type d'Exercice</label>
-      <select [(ngModel)]="selectedExerciseType" (change)="loadChallenges()">
-        <option value="">Tous</option>
-        <option *ngFor="let type of exerciseTypes" [value]="type._id">
-          {{ type.name }}
-        </option>
-      </select>
-    </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Type d'Exercice</label>
+          <select class="form-select" [(ngModel)]="selectedExerciseType" (change)="loadChallenges()">
+            <option value="">Tous</option>
+            <option *ngFor="let type of exerciseTypes" [value]="type._id">
+              {{ type.name }}
+            </option>
+          </select>
+        </div>
 
-    <div class="filter-group">
-      <label>Durée (jours)</label>
-      <div class="duration-inputs">
-        <input 
-          type="number" 
-          [(ngModel)]="minDuration" 
-          (change)="loadChallenges()" 
-          placeholder="Min"
-          min="1"
-        >
-        <span>-</span>
-        <input 
-          type="number" 
-          [(ngModel)]="maxDuration" 
-          (change)="loadChallenges()" 
-          placeholder="Max"
-          min="1"
-        >
-      </div>
-    </div>
+        <div class="col-md-4 mb-3">
+          <label class="form-label">Durée (jours)</label>
+          <div class="row g-2">
+            <div class="col">
+              <input 
+                type="number" 
+                class="form-control"
+                [(ngModel)]="minDuration" 
+                (change)="loadChallenges()" 
+                placeholder="Min"
+                min="1"
+              >
+            </div>
+            <div class="col-auto d-flex align-items-center">
+              <span class="text-muted">-</span>
+            </div>
+            <div class="col">
+              <input 
+                type="number" 
+                class="form-control"
+                [(ngModel)]="maxDuration" 
+                (change)="loadChallenges()" 
+                placeholder="Max"
+                min="1"
+              >
+            </div>
+          </div>
+        </div>
 
-    <button class="btn-reset" (click)="selectedDifficulty=''; selectedExerciseType=''; minDuration=null; maxDuration=null; loadChallenges()">
-      Réinitialiser
-    </button>
-
-  </div>
-
-  <div *ngIf="loading">Chargement...</div>
-
-  <div class="grid" *ngIf="!loading">
-    <div *ngFor="let challenge of challenges" class="card">
-      <div class="card-header">
-        <h3>{{ challenge.title }}</h3>
-        <span class="badge" [class]="challenge.difficulty">{{ challenge.difficulty }}</span>
-      </div>
-      <div class="card-body">
-        <p>{{ challenge.description | slice:0:100 }}...</p>
-        <p><strong>Catégorie:</strong> {{ challenge.category }}</p>
-        <p><strong>Durée:</strong> {{ challenge.duration }} jours</p>
-        <p><strong>Salle :</strong> {{ getGymHallName(challenge.gymHall) }}</p>
-      </div>
-      <div class="card-footer">
-        <a [routerLink]="['/challenges', challenge._id]" class="btn-detail">Voir le détail</a>
+        <div class="col-md-2 mb-3">
+          <button class="btn btn-outline-secondary w-100" 
+            (click)="selectedDifficulty=''; selectedExerciseType=''; minDuration=null; maxDuration=null; loadChallenges()">
+            Réinitialiser
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <p *ngIf="!loading && challenges.length === 0">Aucun défi ne correspond à vos critères.</p>
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p class="mt-2">Chargement des défis...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div *ngFor="let challenge of challenges" class="col">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">{{ challenge.title }}</h5>
+            <span class="badge">{{ challenge.difficulty }}</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">{{ challenge.description | slice:0:100 }}...</p>
+            <div class="mb-2">
+              <strong>Catégorie:</strong> {{ challenge.category }}
+            </div>
+            <div class="mb-2">
+              <strong>Durée:</strong> {{ challenge.duration }} jours
+            </div>
+            <div>
+              <strong>Salle :</strong> {{ getGymHallName(challenge.gymHall) }}
+            </div>
+          </div>
+          <div class="card-footer">
+            <a [routerLink]="['/challenges', challenge._id]" class="btn btn-outline-primary w-100">Voir le détail</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="challenges.length === 0" class="text-center mt-4 alert alert-warning">
+      Aucun défi ne correspond à vos critères.
+    </p>
+  </div>
 </div>

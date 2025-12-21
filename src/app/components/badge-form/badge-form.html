@@ -1,71 +1,137 @@
-<div>
-  <h1>{{ isEditMode ? 'Modifier le badge' : 'Créer un badge' }}</h1>
+<div class="container py-4">
+  <h1 class="mb-4">{{ isEditMode ? 'Modifier le badge' : 'Créer un badge' }}</h1>
 
-  <div *ngIf="loading">Chargement...</div>
-  <div *ngIf="error">{{ error }}</div>
+  <div *ngIf="loading" class="alert alert-info">
+    Chargement...
+  </div>
+  
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
 
-  <form (ngSubmit)="onSubmit()" *ngIf="!loading">
-    <div>
-      <label for="name">Nom du badge *</label>
-      <input type="text" id="name" name="name" [(ngModel)]="badge.name" required>
+  <form (ngSubmit)="onSubmit()" *ngIf="!loading" class="needs-validation" novalidate>
+    
+    <!-- Nom du badge -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Nom du badge *</label>
+      <input type="text" 
+             class="form-control" 
+             id="name" 
+             name="name" 
+             [(ngModel)]="badge.name" 
+             required>
     </div>
 
-    <div>
-      <label for="description">Description *</label>
-      <textarea id="description" name="description" [(ngModel)]="badge.description" required rows="3"></textarea>
+    <!-- Description -->
+    <div class="mb-3">
+      <label for="description" class="form-label">Description *</label>
+      <textarea class="form-control" 
+                id="description" 
+                name="description" 
+                [(ngModel)]="badge.description" 
+                required 
+                rows="3"></textarea>
     </div>
 
-    <div>
-      <label for="icon">Icône</label>
-      <input type="text" id="icon" name="icon" [(ngModel)]="badge.icon">
+    <!-- Icône -->
+    <div class="mb-3">
+      <label for="icon" class="form-label">Icône</label>
+      <input type="text" 
+             class="form-control" 
+             id="icon" 
+             name="icon" 
+             [(ngModel)]="badge.icon">
     </div>
 
-    <div>
-      <label for="category">Catégorie</label>
-      <select id="category" name="category" [(ngModel)]="badge.category">
+    <!-- Catégorie -->
+    <div class="mb-3">
+      <label for="category" class="form-label">Catégorie</label>
+      <select class="form-select" 
+              id="category" 
+              name="category" 
+              [(ngModel)]="badge.category">
         <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
       </select>
     </div>
 
-    <div>
-      <label for="rarity">Rareté</label>
-      <select id="rarity" name="rarity" [(ngModel)]="badge.rarity">
+    <!-- Rareté -->
+    <div class="mb-3">
+      <label for="rarity" class="form-label">Rareté</label>
+      <select class="form-select" 
+              id="rarity" 
+              name="rarity" 
+              [(ngModel)]="badge.rarity">
         <option *ngFor="let rar of rarities" [value]="rar">{{ rar }}</option>
       </select>
     </div>
 
-    <div>
-      <label for="ruleType">Type de règle *</label>
-      <select id="ruleType" name="ruleType" [(ngModel)]="badge.rules!.type" required>
+    <!-- Type de règle -->
+    <div class="mb-3">
+      <label for="ruleType" class="form-label">Type de règle *</label>
+      <select class="form-select" 
+              id="ruleType" 
+              name="ruleType" 
+              [(ngModel)]="badge.rules!.type" 
+              required>
         <option *ngFor="let type of ruleTypes" [value]="type">{{ type }}</option>
       </select>
     </div>
 
-    <div *ngIf="badge.rules!.type !== 'custom'">
-      <label for="ruleValue">Valeur requise *</label>
-      <input type="number" id="ruleValue" name="ruleValue" [(ngModel)]="badge.rules!.value" required min="1">
+    <div *ngIf="badge.rules!.type !== 'custom'" class="mb-3">
+      <label for="ruleValue" class="form-label">Valeur requise *</label>
+      <input type="number" 
+             class="form-control" 
+             id="ruleValue" 
+             name="ruleValue" 
+             [(ngModel)]="badge.rules!.value" 
+             required 
+             min="1">
     </div>
 
-    <div *ngIf="badge.rules!.type === 'custom'">
-      <label for="customCondition">Condition personnalisée</label>
-      <textarea id="customCondition" name="customCondition" [(ngModel)]="badge.rules!.customCondition" rows="2"></textarea>
+    <div *ngIf="badge.rules!.type === 'custom'" class="mb-3">
+      <label for="customCondition" class="form-label">Condition personnalisée</label>
+      <textarea class="form-control" 
+                id="customCondition" 
+                name="customCondition" 
+                [(ngModel)]="badge.rules!.customCondition" 
+                rows="2"></textarea>
     </div>
 
-    <div>
-      <label for="scoreBonus">Bonus de score</label>
-      <input type="number" id="scoreBonus" name="scoreBonus" [(ngModel)]="badge.scoreBonus" min="0">
+    <!-- Bonus de score -->
+    <div class="mb-3">
+      <label for="scoreBonus" class="form-label">Bonus de score</label>
+      <input type="number" 
+             class="form-control" 
+             id="scoreBonus" 
+             name="scoreBonus" 
+             [(ngModel)]="badge.scoreBonus" 
+             min="0">
     </div>
 
-    <div>
-      <label for="isActive">
-        <input type="checkbox" id="isActive" name="isActive" [(ngModel)]="badge.isActive">
-        Badge actif
-      </label>
+    <div class="mb-4">
+      <div class="form-check">
+        <input class="form-check-input" 
+               type="checkbox" 
+               id="isActive" 
+               name="isActive" 
+               [(ngModel)]="badge.isActive">
+        <label class="form-check-label" for="isActive">
+          Badge actif
+        </label>
+      </div>
     </div>
 
-    <div>
-      <button type="submit" [disabled]="loading">{{ isEditMode ? 'Mettre à jour' : 'Créer' }}</button>
-      <button type="button" (click)="cancel()">Annuler</button>
+    <div class="d-flex gap-2">
+      <button type="submit" 
+              class="btn btn-primary" 
+              [disabled]="loading">
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button type="button" 
+              class="btn btn-outline-secondary" 
+              (click)="cancel()">
+        Annuler
+      </button>
     </div>
   </form>
 </div>
