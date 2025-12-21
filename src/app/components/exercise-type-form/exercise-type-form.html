@@ -1,27 +1,29 @@
-<div class="container">
-  <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Type d'Exercice</h2>
+<div class="container py-4">
+  <h2 class="mb-4">{{ isEditMode ? 'Modifier' : 'Créer' }} un Type d'Exercice</h2>
   
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger mb-3">{{ errorMessage }}</div>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div>
-      <label>Nom :</label>
-      <input type="text" formControlName="name" placeholder="Ex: Développé Couché">
-    </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="card">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Nom :</label>
+        <input type="text" class="form-control" formControlName="name" placeholder="Ex: Développé Couché">
+      </div>
 
-    <div>
-      <label>Description :</label>
-      <textarea formControlName="description" rows="3"></textarea>
-    </div>
+      <div class="mb-3">
+        <label class="form-label">Description :</label>
+        <textarea class="form-control" formControlName="description" rows="3"></textarea>
+      </div>
 
-    <div>
-      <label>Groupes Musculaires (séparés par des virgules) :</label>
-      <input type="text" formControlName="muscleGroupsInput" placeholder="Ex: Pectoraux, Triceps">
-    </div>
+      <div class="mb-4">
+        <label class="form-label">Groupes Musculaires (séparés par des virgules) :</label>
+        <input type="text" class="form-control" formControlName="muscleGroupsInput" placeholder="Ex: Pectoraux, Triceps">
+      </div>
 
-    <div class="actions">
-      <button type="submit" [disabled]="form.invalid">Enregistrer</button>
-      <a routerLink="/exercise-types" class="btn-cancel">Annuler</a>
+      <div class="d-flex justify-content-between">
+        <a routerLink="/exercise-types" class="btn btn-outline-secondary">Annuler</a>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Enregistrer</button>
+      </div>
     </div>
   </form>
 </div>

@@ -1,63 +1,87 @@
-<div>
-  <h1>Mon Profil</h1>
+<div class="container py-4">
+  <h1 class="mb-4">Mon Profil</h1>
 
-  <div *ngIf="errorMessage">
-    <p>{{ errorMessage }}</p>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
   </div>
 
-  <div *ngIf="successMessage">
-    <p>{{ successMessage }}</p>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
   </div>
 
-  <div *ngIf="user">
-    <h2>Informations du compte</h2>
-    <p>Rôle: {{ user.role }}</p>
-    <p>Actif: {{ user.isActive ? 'Oui' : 'Non' }}</p>
-    <p>Membre depuis: {{ user.createdAt | date:'dd/MM/yyyy' }}</p>
+  <div *ngIf="user" class="card mb-4">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Informations du compte</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Rôle:</strong> {{ user.role }}</p>
+          <p><strong>Actif:</strong> {{ user.isActive ? 'Oui' : 'Non' }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Membre depuis:</strong> {{ user.createdAt | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <h2>Modifier le profil</h2>
-  <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
-    <div>
-      <label for="firstName">Prénom:</label>
-      <input id="firstName" type="text" formControlName="firstName" />
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Modifier le profil</h2>
     </div>
-
-    <div>
-      <label for="lastName">Nom:</label>
-      <input id="lastName" type="text" formControlName="lastName" />
+    <div class="card-body">
+      <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Prénom:</label>
+            <input type="text" class="form-control" formControlName="firstName" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nom:</label>
+            <input type="text" class="form-control" formControlName="lastName" />
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Email:</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Téléphone:</label>
+            <input type="tel" class="form-control" formControlName="phone" />
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" [disabled]="!profileForm.valid">
+          Mettre à jour le profil
+        </button>
+      </form>
     </div>
+  </div>
 
-    <div>
-      <label for="email">Email:</label>
-      <input id="email" type="email" formControlName="email" />
+  <div class="card">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Changer le mot de passe</h2>
     </div>
-
-    <div>
-      <label for="phone">Téléphone:</label>
-      <input id="phone" type="tel" formControlName="phone" />
+    <div class="card-body">
+      <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+        <div class="mb-3">
+          <label class="form-label">Mot de passe actuel:</label>
+          <input type="password" class="form-control" formControlName="currentPassword" />
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Nouveau mot de passe:</label>
+          <input type="password" class="form-control" formControlName="newPassword" />
+          <small class="form-text text-muted">Minimum 6 caractères</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" [disabled]="!passwordForm.valid">
+          Changer le mot de passe
+        </button>
+      </form>
     </div>
-
-    <button type="submit" [disabled]="!profileForm.valid">
-      Mettre à jour le profil
-    </button>
-  </form>
-
-  <h2>Changer le mot de passe</h2>
-  <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
-    <div>
-      <label for="currentPassword">Mot de passe actuel:</label>
-      <input id="currentPassword" type="password" formControlName="currentPassword" />
-    </div>
-
-    <div>
-      <label for="newPassword">Nouveau mot de passe:</label>
-      <input id="newPassword" type="password" formControlName="newPassword" />
-      <small>Minimum 6 caractères</small>
-    </div>
-
-    <button type="submit" [disabled]="!passwordForm.valid">
-      Changer le mot de passe
-    </button>
-  </form>
+  </div>
 </div>

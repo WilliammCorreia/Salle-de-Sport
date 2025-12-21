@@ -1,32 +1,34 @@
-<div class="container">
-  <div class="header">
-    <h2>Types d'Exercices</h2>
-    <button *ngIf="authService.isAdmin()" (click)="createType()">+ Nouveau Type</button>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Types d'Exercices</h2>
+    <button *ngIf="authService.isAdmin()" (click)="createType()" class="btn btn-primary">+ Nouveau Type</button>
   </div>
 
-  <div *ngIf="loading">Chargement...</div>
+  <div *ngIf="loading" class="alert alert-info">Chargement...</div>
 
-  <table *ngIf="!loading && (exerciseTypes?.length || 0) > 0">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Description</th>
-        <th>Muscles</th>
-        <th *ngIf="authService.isAdmin()">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let type of exerciseTypes">
-        <td>{{ type.name }}</td>
-        <td>{{ type.description }}</td>
-        <td>{{ type.muscleGroups.join(', ') }}</td>
-        <td *ngIf="authService.isAdmin()">
-          <button (click)="editType(type._id)">Éditer</button>
-          <button (click)="deleteType(type._id)" class="btn-danger">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div *ngIf="!loading && (exerciseTypes?.length || 0) > 0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>Muscles</th>
+          <th *ngIf="authService.isAdmin()">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let type of exerciseTypes">
+          <td>{{ type.name }}</td>
+          <td>{{ type.description }}</td>
+          <td>{{ type.muscleGroups.join(', ') }}</td>
+          <td *ngIf="authService.isAdmin()">
+            <button (click)="editType(type._id)" class="btn btn-outline-primary btn-sm me-2">Éditer</button>
+            <button (click)="deleteType(type._id)" class="btn btn-outline-danger btn-sm">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <p *ngIf="!loading && (exerciseTypes?.length || 0) === 0">Aucun type d'exercice trouvé.</p>
+  <p *ngIf="!loading && (exerciseTypes?.length || 0) === 0" class="alert alert-warning">Aucun type d'exercice trouvé.</p>
 </div>

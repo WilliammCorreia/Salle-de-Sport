@@ -1,39 +1,49 @@
-<div>
-  <h2>Connexion</h2>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">Connexion</h2>
 
-  <form (ngSubmit)="onSubmit()">
-    <div>
-      <label>Email:</label><br />
-      <input
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-        placeholder="email@example.com"
-      />
+          <form (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label class="form-label">Email:</label>
+              <input
+                type="email"
+                class="form-control"
+                [(ngModel)]="email"
+                name="email"
+                required
+                placeholder="email@example.com"
+              />
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Mot de passe:</label>
+              <input
+                type="password"
+                class="form-control"
+                [(ngModel)]="password"
+                name="password"
+                required
+                placeholder="••••••••"
+              />
+            </div>
+
+            @if (errorMessage) {
+            <div class="alert alert-danger">{{ errorMessage }}</div>
+            }
+
+            <button type="submit" class="btn btn-primary w-100" [disabled]="loading">
+              {{ loading ? 'Connexion...' : 'Se connecter' }}
+            </button>
+          </form>
+
+          <div class="text-center mt-3">
+            <a routerLink="/register" class="text-decoration-none">Pas encore de compte ? S'inscrire</a>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div>
-      <label>Mot de passe:</label><br />
-      <input
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-        placeholder="••••••••"
-      />
-    </div>
-
-    @if (errorMessage) {
-    <div style="color: red">{{ errorMessage }}</div>
-    }
-
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Connexion...' : 'Se connecter' }}
-    </button>
-  </form>
-
-  <p>
-    <a routerLink="/register">Pas encore de compte ? S'inscrire</a>
-  </p>
+  </div>
 </div>

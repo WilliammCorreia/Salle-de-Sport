@@ -1,49 +1,68 @@
-<nav>
-  <a routerLink="/" style="font-weight: bold; text-decoration: none; color: #333;">TSPark Sport</a>
-  
-  @if (authService.isLoggedIn()) {
-    <span class="separator">|</span>
-    <a routerLink="/gym-halls" routerLinkActive="active-link">Salles</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/">TSPark Sport</a>
     
-    <span class="separator">|</span>
-    <a routerLink="/challenges" routerLinkActive="active-link">Défis</a>
-
-    <span class="separator">|</span>
-    <a routerLink="/invitations" routerLinkActive="active-link">Invitations</a>
-
-    <span class="separator">|</span>
-    <a routerLink="/workouts/new" routerLinkActive="active-link">Sessions d'entraînement</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     
-    <span class="separator">|</span>
-    <a routerLink="/leaderboard" routerLinkActive="active-link">Classement</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      @if (authService.isLoggedIn()) {
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/gym-halls" routerLinkActive="active">Salles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/challenges" routerLinkActive="active">Défis</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/invitations" routerLinkActive="active">Invitations</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/workouts/new" routerLinkActive="active">Sessions</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/leaderboard" routerLinkActive="active">Classement</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/workouts/new" routerLinkActive="active">Session d'entraînement</a>
+          </li>
 
-    @if (authService.isAdmin()) {
-      <span class="separator">|</span>
-      <a routerLink="/users" routerLinkActive="active-link">Utilisateurs</a>
-      
-      <span class="separator">|</span>
-      <a routerLink="/exercise-types" routerLinkActive="active-link">Types Exos</a>
-
-      <span class="separator">|</span>
-      <a routerLink="/badges" routerLinkActive="active-link">Badges</a>
-    }
-    
-    <span class="separator">|</span>
-    <a routerLink="/profile" routerLinkActive="active-link">Mon Profil</a>
-    
-    <span class="separator">|</span>
-    <button (click)="logout()" class="btn-logout">Déconnexion</button>
-    
-    <span class="user-info">
-      {{ authService.getCurrentUser()?.firstName }} 
-      <small>({{ authService.getCurrentUser()?.role }})</small>
-    </span>
-
-  } @else {
-    <span class="separator">|</span>
-    <a routerLink="/login" routerLinkActive="active-link">Connexion</a>
-    <span class="separator">|</span>
-    <a routerLink="/register" routerLinkActive="active-link">Inscription</a>
-  }
+          
+          @if (authService.isAdmin()) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/users" routerLinkActive="active">Utilisateurs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/exercise-types" routerLinkActive="active">Types Exos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/badges" routerLinkActive="active">Badges</a>
+            </li>
+          }
+          
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/profile" routerLinkActive="active">Profil</a>
+          </li>
+        </ul>
+        
+        <div class="navbar-text me-3">
+          {{ authService.getCurrentUser()?.firstName }} 
+          <small class="text-muted">({{ authService.getCurrentUser()?.role }})</small>
+        </div>
+        
+        <button (click)="logout()" class="btn btn-outline-secondary btn-sm">Déconnexion</button>
+        
+      } @else {
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active">Connexion</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/register" routerLinkActive="active">Inscription</a>
+          </li>
+        </ul>
+      }
+    </div>
+  </div>
 </nav>
-<hr>
