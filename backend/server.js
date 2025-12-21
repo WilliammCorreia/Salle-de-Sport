@@ -8,6 +8,7 @@ const { notFound, errorHandler } = require('./src/middleware/error.middleware');
 
 // Importation des routes
 const authRoutes = require('./src/routes/auth.routes');
+const badgeRoutes = require('./src/routes/badge.routes')
 const userRoutes = require('./src/routes/user.routes');
 const gymHallRoutes = require('./src/routes/gymHall.routes');
 const exerciceRoutes = require('./src/routes/exercice.routes');
@@ -47,6 +48,7 @@ app.get('/', (req, res) => {
 
 // Routes API
 app.use('/api/auth', authRoutes);
+app.use('/api/badges', badgeRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/gym-halls', gymHallRoutes);
 app.use('/api/exercices-types', exerciceRoutes);

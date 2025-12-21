@@ -1,109 +1,116 @@
-<div class="container">
+<div class="container py-4">
   <h2>{{ isEditMode ? 'Modifier' : 'Créer' }} un Défi</h2>
   
-  <div *ngIf="errorMessage" class="alert-error">{{ errorMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     
-    <div class="section">
-      <h3>Informations Générales</h3>
-      <div class="form-group">
-        <label>Titre</label>
-        <input formControlName="title" type="text" placeholder="Ex: 30 jours Abdos">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3>Informations Générales</h3>
       </div>
-      <div class="form-group">
-        <label>Description</label>
-        <textarea formControlName="description" rows="3"></textarea>
-      </div>
-      
-      <div class="row">
-        <div class="form-group">
-          <label>Difficulté</label>
-          <select formControlName="difficulty">
-            <option value="débutant">Débutant</option>
-            <option value="intermédiaire">Intermédiaire</option>
-            <option value="avancé">Avancé</option>
-            <option value="expert">Expert</option>
-          </select>
+      <div class="card-body">
+        <div class="mb-3">
+          <label class="form-label">Titre</label>
+          <input formControlName="title" type="text" class="form-control" placeholder="Ex: 30 jours Abdos">
         </div>
-        <div class="form-group">
-          <label>Catégorie</label>
-          <select formControlName="category">
-            <option value="perte_poids">Perte de poids</option>
-            <option value="prise_masse">Prise de masse</option>
-            <option value="endurance">Endurance</option>
-            <option value="force">Force</option>
-            <option value="autre">Autre</option>
-          </select>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea formControlName="description" rows="3" class="form-control"></textarea>
         </div>
-        <div class="form-group">
-          <label>Durée (jours)</label>
-          <input formControlName="duration" type="number">
-        </div>
-      </div>
-
-    <div class="form-group" *ngIf="authService.isGymOwner() && myGymHalls.length > 0">
-        <label>Lier à une salle (Optionnel)</label>
-        <select formControlName="gymHall">
-        <option [ngValue]="null">Aucune (Défi Communautaire)</option>
-        <option *ngFor="let hall of myGymHalls" [value]="hall._id">{{ hall.name }}</option>
-        </select>
-        <small>Note: Si vous liez une salle, nous vérifierons qu'elle possède l'équipement requis.</small>
-    </div>
-
-    <div class="form-group equipment-section" *ngIf="availableEquipment.length > 0">
-        <label>Équipements requis pour ce défi :</label>
-        <div class="checkbox-grid">
-        <div *ngFor="let item of availableEquipment" class="checkbox-item">
-            <label>
-            <input 
-                type="checkbox" 
-                [checked]="isEquipmentSelected(item)"
-                (change)="onEquipmentChange($event, item)"
-            >
-            {{ item }}
-            </label>
-        </div>
-        </div>
-    </div>
-
-    </div>
-
-    <div class="section">
-      <div class="flex-between">
-        <h3>Programme d'Exercices</h3>
-        <button type="button" (click)="addExercise()" class="btn-secondary">+ Ajouter un exo</button>
-      </div>
-
-      <div formArrayName="exercises">
-        <div *ngFor="let control of exercisesControls; let i = index" [formGroupName]="i" class="exercise-row">
-          <div class="form-group grow">
-            <label>Exercice</label>
-            <select formControlName="exerciseType">
-              <option value="" disabled>Choisir...</option>
-              <option *ngFor="let type of exerciseTypes" [value]="type._id">{{ type.name }}</option>
+        
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Difficulté</label>
+            <select formControlName="difficulty" class="form-select">
+              <option value="débutant">Débutant</option>
+              <option value="intermédiaire">Intermédiaire</option>
+              <option value="avancé">Avancé</option>
+              <option value="expert">Expert</option>
             </select>
           </div>
-          <div class="form-group small">
-            <label>Séries</label>
-            <input type="number" formControlName="sets">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Catégorie</label>
+            <select formControlName="category" class="form-select">
+              <option value="perte_poids">Perte de poids</option>
+              <option value="prise_masse">Prise de masse</option>
+              <option value="endurance">Endurance</option>
+              <option value="force">Force</option>
+              <option value="autre">Autre</option>
+            </select>
           </div>
-          <div class="form-group small">
-            <label>Reps</label>
-            <input type="number" formControlName="reps">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Durée (jours)</label>
+            <input formControlName="duration" type="number" class="form-control">
           </div>
-          <div class="form-group small">
-            <label>Repos (s)</label>
-            <input type="number" formControlName="restTime">
+        </div>
+
+        <div class="mb-3" *ngIf="authService.isGymOwner() && myGymHalls.length > 0">
+          <label class="form-label">Lier à une salle (Optionnel)</label>
+          <select formControlName="gymHall" class="form-select">
+            <option [ngValue]="null">Aucune (Défi Communautaire)</option>
+            <option *ngFor="let hall of myGymHalls" [value]="hall._id">{{ hall.name }}</option>
+          </select>
+          <small class="form-text text-muted">Note: Si vous liez une salle, nous vérifierons qu'elle possède l'équipement requis.</small>
+        </div>
+
+        <div class="mb-3" *ngIf="availableEquipment.length > 0">
+          <label class="form-label">Équipements requis pour ce défi :</label>
+          <div class="row">
+            <div *ngFor="let item of availableEquipment" class="col-md-3 mb-2">
+              <label class="form-check-label">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  [checked]="isEquipmentSelected(item)"
+                  (change)="onEquipmentChange($event, item)"
+                >
+                {{ item }}
+              </label>
+            </div>
           </div>
-          <button type="button" (click)="removeExercise(i)" class="btn-danger-icon" title="Retirer">×</button>
         </div>
       </div>
     </div>
 
-    <div class="actions">
-      <button type="submit" [disabled]="form.invalid" class="btn-primary">Enregistrer le Défi</button>
-      <a routerLink="/challenges" class="btn-cancel">Annuler</a>
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Programme d'Exercices</h3>
+        <button type="button" (click)="addExercise()" class="btn btn-secondary">+ Ajouter un exo</button>
+      </div>
+      <div class="card-body">
+        <div formArrayName="exercises">
+          <div *ngFor="let control of exercisesControls; let i = index" [formGroupName]="i" class="row mb-3 align-items-end">
+            <div class="col-md-4 mb-2">
+              <label class="form-label">Exercice</label>
+              <select formControlName="exerciseType" class="form-select">
+                <option value="" disabled>Choisir...</option>
+                <option *ngFor="let type of exerciseTypes" [value]="type._id">{{ type.name }}</option>
+              </select>
+            </div>
+            <div class="col-md-2 mb-2">
+              <label class="form-label">Séries</label>
+              <input type="number" class="form-control" formControlName="sets">
+            </div>
+            <div class="col-md-2 mb-2">
+              <label class="form-label">Reps</label>
+              <input type="number" class="form-control" formControlName="reps">
+            </div>
+            <div class="col-md-2 mb-2">
+              <label class="form-label">Repos (s)</label>
+              <input type="number" class="form-control" formControlName="restTime">
+            </div>
+            <div class="col-md-2 mb-2">
+              <button type="button" (click)="removeExercise(i)" class="btn btn-danger">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between">
+      <a routerLink="/challenges" class="btn btn-outline-secondary">Annuler</a>
+      <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Enregistrer le Défi</button>
     </div>
   </form>
 </div>

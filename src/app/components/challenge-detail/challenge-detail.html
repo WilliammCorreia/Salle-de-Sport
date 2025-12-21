@@ -1,49 +1,57 @@
-<div *ngIf="challenge" class="container">
-  <div class="header">
+<div *ngIf="challenge" class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>{{ challenge.title }}</h1>
     <span class="badge">{{ challenge.difficulty }}</span>
   </div>
 
-  <div class="content-grid">
-    <div class="main-info">
-      <p class="description">{{ challenge.description }}</p>
-      
-      <h3>Programme</h3>
-      <ul class="exercise-list">
-        <li *ngFor="let ex of challenge.exercises">
-          <strong>{{ getExerciseName(ex) }}</strong> : 
-          {{ ex.sets }} séries x {{ ex.reps }} reps (Repos: {{ ex.restTime }}s)
-        </li>
-      </ul>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="mb-4">
+        <p>{{ challenge.description }}</p>
+      </div>
+
+      <div>
+        <h3>Programme</h3>
+        <ul class="list-group">
+          <li *ngFor="let ex of challenge.exercises" class="list-group-item">
+            <strong>{{ getExerciseName(ex) }}</strong> : 
+            {{ ex.sets }} séries x {{ ex.reps }} reps (Repos: {{ ex.restTime }}s)
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div class="sidebar">
-        <div class="card info-card">
-            <p><strong>Durée :</strong> {{ challenge.duration }} jours</p>
-            <p><strong>Catégorie :</strong> {{ challenge.category }}</p>
-            <p><strong>Créé par :</strong> {{ getCreatorName(challenge.creator) }}</p>
-            
-            <button 
-                *ngIf="!isParticipant" 
-                (click)="joinChallenge()" 
-                [disabled]="joinLoading"
-                class="btn-primary full-width"
-            >
-                {{ joinLoading ? 'Inscription...' : 'Rejoindre ce défi' }}
-            </button>
+    <div class="col-lg-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <p><strong>Durée :</strong> {{ challenge.duration }} jours</p>
+          <p><strong>Catégorie :</strong> {{ challenge.category }}</p>
+          <p><strong>Créé par :</strong> {{ getCreatorName(challenge.creator) }}</p>
+          
+          <button 
+            *ngIf="!isParticipant" 
+            (click)="joinChallenge()" 
+            [disabled]="joinLoading"
+            class="btn btn-primary w-100"
+          >
+            {{ joinLoading ? 'Inscription...' : 'Rejoindre ce défi' }}
+          </button>
 
-            <div *ngIf="isParticipant" class="badge-success full-width">
-                ✅ Vous participez à ce défi
-            </div>
+          <div *ngIf="isParticipant" class="alert alert-success mt-2">
+            ✅ Vous participez à ce défi
+          </div>
         </div>
+      </div>
 
-      <div class="card invite-card">
-        <h3>Inviter un ami</h3>
-        <input type="email" [(ngModel)]="inviteEmail" placeholder="Email de l'ami">
-        <button (click)="sendInvitation()" [disabled]="!inviteEmail">Envoyer</button>
-        
-        <p *ngIf="inviteSuccess" class="success-msg">{{ inviteSuccess }}</p>
-        <p *ngIf="inviteError" class="error-msg">{{ inviteError }}</p>
+      <div class="card">
+        <div class="card-body">
+          <h3>Inviter un ami</h3>
+          <input type="email" class="form-control mb-2" [(ngModel)]="inviteEmail" placeholder="Email de l'ami">
+          <button (click)="sendInvitation()" [disabled]="!inviteEmail" class="btn btn-secondary w-100">Envoyer</button>
+          
+          <p *ngIf="inviteSuccess" class="text-success mt-2">{{ inviteSuccess }}</p>
+          <p *ngIf="inviteError" class="text-danger mt-2">{{ inviteError }}</p>
+        </div>
       </div>
     </div>
   </div>

@@ -1,45 +1,47 @@
-<div>
-  <h1>Gestion des Badges</h1>
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Gestion des Badges</h1>
+    <a routerLink="/badges/new" class="btn btn-primary">Créer un nouveau badge</a>
+  </div>
 
-  <a routerLink="/badges/new">Créer un nouveau badge</a>
+  <div *ngIf="loading" class="alert alert-info">Chargement...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
-  <div *ngIf="loading">Chargement...</div>
-  <div *ngIf="error">{{ error }}</div>
+  <div *ngIf="!loading && badges.length > 0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Icône</th>
+          <th>Nom</th>
+          <th>Description</th>
+          <th>Catégorie</th>
+          <th>Rareté</th>
+          <th>Type de règle</th>
+          <th>Valeur requise</th>
+          <th>Bonus score</th>
+          <th>Actif</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let badge of badges">
+          <td>{{ badge.icon }}</td>
+          <td>{{ badge.name }}</td>
+          <td>{{ badge.description }}</td>
+          <td>{{ badge.category }}</td>
+          <td>{{ badge.rarity }}</td>
+          <td>{{ badge.rules.type }}</td>
+          <td>{{ badge.rules.value || 'N/A' }}</td>
+          <td>{{ badge.scoreBonus }}</td>
+          <td>{{ badge.isActive ? 'Oui' : 'Non' }}</td>
+          <td>
+            <a [routerLink]="['/badges/edit', badge._id]" class="btn btn-sm btn-outline-primary me-2">Modifier</a>
+            <button (click)="deleteBadge(badge._id)" class="btn btn-sm btn-outline-danger">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <table *ngIf="!loading && badges.length > 0" border="1">
-    <thead>
-      <tr>
-        <th>Icône</th>
-        <th>Nom</th>
-        <th>Description</th>
-        <th>Catégorie</th>
-        <th>Rareté</th>
-        <th>Type de règle</th>
-        <th>Valeur requise</th>
-        <th>Bonus score</th>
-        <th>Actif</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let badge of badges">
-        <td>{{ badge.icon }}</td>
-        <td>{{ badge.name }}</td>
-        <td>{{ badge.description }}</td>
-        <td>{{ badge.category }}</td>
-        <td>{{ badge.rarity }}</td>
-        <td>{{ badge.rules.type }}</td>
-        <td>{{ badge.rules.value || 'N/A' }}</td>
-        <td>{{ badge.scoreBonus }}</td>
-        <td>{{ badge.isActive ? 'Oui' : 'Non' }}</td>
-        <td>
-          <a [routerLink]="['/badges/edit', badge._id]">Modifier</a>
-          |
-          <button (click)="deleteBadge(badge._id)">Supprimer</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p *ngIf="!loading && badges.length === 0">Aucun badge disponible.</p>
+  <p *ngIf="!loading && badges.length === 0" class="alert alert-warning">Aucun badge disponible.</p>
 </div>
