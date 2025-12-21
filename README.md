@@ -101,3 +101,83 @@ docker-compose exec backend npm run seed
 ### Invitations aux Défis
 - **GET** `/api/users/me/invitations` - Récupérer mes invitations en attente. Accès : utilisateurs authentifiés.
 - **PUT** `/api/invitations/:id/respond` - Accepter/Refuser une invitation. Accès : destinataire. Body : `status` (`accepted` | `refused`)
+
+### Badges
+- **GET** `/api/badges` - Récupérer tous les badges. Accès : public.
+- **GET** `/api/badges/:id` - Récupérer un badge par ID. Accès : public.
+- **GET** `/api/badges/:id/users` - Récupérer la liste des utilisateurs ayant obtenu ce badge. Accès : public.
+- **POST** `/api/badges` - Créer un nouveau badge. Accès : super_admin. Body (JSON) attendu :
+  - name (string, requis)
+  - description (string, requis)
+  - icon (string, optionnel)
+  - criteria (object, requis)
+- **PUT** `/api/badges/:id` - Mettre à jour un badge par ID. Accès : super_admin. Même body que pour la création.
+- **DELETE** `/api/badges/:id` - Supprimer un badge par ID. Accès : super_admin.
+- **POST** `/api/badges/:id/award/:userId` - Attribuer un badge à un utilisateur. Accès : super_admin.
+
+### Leaderboard (Classements)
+- **GET** `/api/leaderboard/users` - Récupérer le classement général des utilisateurs. Accès : public.
+- **GET** `/api/leaderboard/gyms` - Récupérer le classement des salles de sport. Accès : public.
+- **GET** `/api/leaderboard/challenges/:id` - Récupérer le classement d'un défi spécifique. Accès : public.
+- **GET** `/api/leaderboard/challenges-completed` - Récupérer le classement des utilisateurs par nombre de défis complétés. Accès : public.
+- **GET** `/api/leaderboard/badges` - Récupérer le classement des utilisateurs par nombre de badges obtenus. Accès : public.
+
+### Progression
+- **GET** `/api/progress/my-challenges` - Obtenir tous les défis en cours de l'utilisateur connecté. Accès : utilisateurs authentifiés.
+
+### Workouts (Entraînements)
+- **GET** `/api/workouts` - Récupérer tous les entraînements de l'utilisateur connecté. Accès : utilisateurs authentifiés.
+- **GET** `/api/workouts/:id` - Récupérer un entraînement par ID. Accès : utilisateurs authentifiés.
+- **POST** `/api/workouts` - Créer un nouveau entraînement. Accès : utilisateurs authentifiés. Body (JSON) attendu :
+  - user (ObjectId, requis)
+  - exercises (array, requis)
+  - duration (number, requis)
+  - caloriesBurned (number, optionnel)
+  - notes (string, optionnel)
+- **PUT** `/api/workouts/:id` - Mettre à jour un entraînement par ID. Accès : utilisateurs authentifiés. Même body que pour la création.
+- **DELETE** `/api/workouts/:id` - Supprimer un entraînement par ID. Accès : utilisateurs authentifiés.
+- **GET** `/api/workouts/stats/summary` - Obtenir les statistiques d'entraînement de l'utilisateur connecté. Accès : utilisateurs authentifiés.
+
+## Structure du Projet
+
+### Backend
+
+#### Routes
+Tous les fichiers de routes se trouvent dans : **`backend/src/routes/`**
+
+- `auth.routes.js` - Routes d'authentification
+- `user.routes.js` - Routes de gestion des utilisateurs
+- `gymHall.routes.js` - Routes de gestion des salles de sport
+- `exercice.routes.js` - Routes de gestion des types d'exercices
+- `challenge.routes.js` - Routes de gestion des défis
+- `challengeInvitation.routes.js` - Routes de gestion des invitations aux défis
+- `badge.routes.js` - Routes de gestion des badges
+- `leaderboard.routes.js` - Routes des classements
+- `progress.routes.js` - Routes de suivi de progression
+- `workout.routes.js` - Routes de gestion des entraînements
+
+#### Controllers
+Tous les fichiers de controllers se trouvent dans : **`backend/src/controllers/`**
+
+- `auth.controller.js` - Logique d'authentification
+- `user.controller.js` - Logique de gestion des utilisateurs
+- `gymHall.controller.js` - Logique de gestion des salles de sport
+- `exercicesTypes.controller.js` - Logique de gestion des types d'exercices
+- `challenge.controller.js` - Logique de gestion des défis
+- `challengeInvitation.controller.js` - Logique de gestion des invitations aux défis
+- `badge.controller.js` - Logique de gestion des badges
+- `leaderboard.controller.js` - Logique des classements
+- `challengeProgress.controller.js` - Logique de suivi de progression
+- `workout.controller.js` - Logique de gestion des entraînements
+
+#### Models
+Tous les fichiers de models se trouvent dans : **`backend/src/models/`**
+
+- `User.model.js` - Modèle utilisateur
+- `GymHall.model.js` - Modèle salle de sport
+- `ExercicesTypes.model.js` - Modèle type d'exercice
+- `Challenge.model.js` - Modèle défi
+- `ChallengeInvitation.model.js` - Modèle invitation à un défi
+- `Badge.model.js` - Modèle badge
+- `ChallengeProgress.model.js` - Modèle progression de défi
+- `Workout.model.js` - Modèle entraînement
